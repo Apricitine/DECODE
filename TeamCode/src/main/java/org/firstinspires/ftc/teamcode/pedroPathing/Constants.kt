@@ -4,7 +4,9 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.ftc.FollowerBuilder
 import com.pedropathing.ftc.drivetrains.MecanumConstants
+import com.pedropathing.ftc.localization.constants.ThreeWheelIMUConstants
 import com.pedropathing.paths.PathConstraints
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -24,10 +26,20 @@ class Constants {
                 .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                 .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+        private var localizerConstants: ThreeWheelIMUConstants =
+            ThreeWheelIMUConstants().IMU_HardwareMapName("imu").IMU_Orientation(
+                RevHubOrientationOnRobot(
+                    RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                    RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                )
+            );
+
 
         @JvmStatic
         fun createFollower(hardwareMap: HardwareMap?): Follower {
-            return FollowerBuilder(followerConstants, hardwareMap).pathConstraints(pathConstraints)
+            return FollowerBuilder(followerConstants, hardwareMap)
+                .threeWheelIMULocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
                 .build()
         }
