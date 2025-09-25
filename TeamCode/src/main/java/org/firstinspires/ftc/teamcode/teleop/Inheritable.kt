@@ -44,7 +44,7 @@ abstract class Inheritable : OpMode() {
     }
 
     override fun start() {
-        follower!!.startTeleopDrive()
+        follower!!.startTeleopDrive(true)
     }
 
     companion object {

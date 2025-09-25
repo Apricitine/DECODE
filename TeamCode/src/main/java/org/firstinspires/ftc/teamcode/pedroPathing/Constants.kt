@@ -15,13 +15,13 @@ class Constants {
     companion object {
         private var followerConstants: FollowerConstants = FollowerConstants().mass(5.0)
         private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
-        private var driveConstants: MecanumConstants =
+        private var mecanumConstants: MecanumConstants =
             MecanumConstants()
                 .maxPower(1.0)
                 .leftFrontMotorName("leftFront")
-                .leftRearMotorName("leftBack")
+                .leftRearMotorName("leftRear")
                 .rightFrontMotorName("rightFront")
-                .rightRearMotorName("rightBack")
+                .rightRearMotorName("rightRear")
                 .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
@@ -32,15 +32,14 @@ class Constants {
                     RevHubOrientationOnRobot.LogoFacingDirection.UP,
                     RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
                 )
-            );
-
+            )
 
         @JvmStatic
         fun createFollower(hardwareMap: HardwareMap?): Follower {
             return FollowerBuilder(followerConstants, hardwareMap)
                 .threeWheelIMULocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
-                .mecanumDrivetrain(driveConstants)
+                .mecanumDrivetrain(mecanumConstants)
                 .build()
         }
     }
