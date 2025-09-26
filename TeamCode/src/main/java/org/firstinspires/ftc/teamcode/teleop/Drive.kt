@@ -1,25 +1,34 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import kotlin.math.abs
 import kotlin.math.pow
 
+@TeleOp(name = "Drive", group = "Main")
 class Drive : OpMode() {
-    val leftFront = hardwareMap.dcMotor.get("leftFront")
-    val leftRear = hardwareMap.dcMotor.get("leftRear")
-    val rightFront = hardwareMap.dcMotor.get("rightFront")
-    val rightRear = hardwareMap.dcMotor.get("rightRear")
+    private lateinit var leftFront: DcMotorEx
+    private lateinit var leftRear: DcMotorEx
+    private lateinit var rightFront: DcMotorEx
+    private lateinit var rightRear: DcMotorEx
 
     override fun init() {
+
+        leftFront = hardwareMap.get(DcMotorEx::class.java, "leftFront")
+        leftRear = hardwareMap.get(DcMotorEx::class.java, "leftRear")
+        rightFront = hardwareMap.get(DcMotorEx::class.java, "rightFront")
+        rightRear = hardwareMap.get(DcMotorEx::class.java, "rightRear")
+
         leftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         leftRear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         rightFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         rightRear.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         leftFront.direction = DcMotorSimple.Direction.REVERSE
-        leftRear.direction = DcMotorSimple.Direction.REVERSE
+        leftRear.direction = DcMotorSimple.Direction.FORWARD
         rightFront.direction = DcMotorSimple.Direction.FORWARD
         rightRear.direction = DcMotorSimple.Direction.FORWARD
     }
@@ -34,7 +43,7 @@ class Drive : OpMode() {
         var directionR = 0.0
 
         if (abs(gamepad1.left_stick_x.toDouble()) > 0.25) directionX =
-            gamepad1.left_stick_x.pow(1).toDouble()
+            -gamepad1.left_stick_x.pow(1).toDouble()
         if (abs(gamepad1.left_stick_y.toDouble()) > 0.25) directionY =
             -gamepad1.left_stick_y.pow(1).toDouble()
         if (abs(gamepad1.right_stick_x.toDouble()) > 0.25) directionR =
