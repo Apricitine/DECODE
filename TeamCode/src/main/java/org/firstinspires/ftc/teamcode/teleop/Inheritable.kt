@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import java.util.function.Supplier
 
+
 enum class CarouselStates {
     ONE,
     TWO,
@@ -28,7 +29,7 @@ abstract class Inheritable : OpMode() {
     protected var follower: Follower? = null
     protected var automatedDrive = false
     private var pathChain: Supplier<PathChain>? = null
-    protected var telemetryM: TelemetryManager? = null
+    lateinit var panelsTelemetry: TelemetryManager
     private var slowMode = false
     private var slowModeMultiplier = 0.5
 
@@ -46,7 +47,7 @@ abstract class Inheritable : OpMode() {
         follower = createFollower(hardwareMap)
         follower!!.setStartingPose(if (startingPose == null) Pose() else startingPose)
         follower!!.update()
-        telemetryM = PanelsTelemetry.telemetry
+        panelsTelemetry = PanelsTelemetry.telemetry
         pathChain = Supplier {
             follower!!.pathBuilder()
                 .addPath(Path(BezierLine({ follower!!.pose }, Pose(45.0, 98.0))))
@@ -103,6 +104,21 @@ abstract class Inheritable : OpMode() {
         if (intakeRunning) {
             leftIntake.power = -1.0
             rightIntake.power = 1.0
+        }
+    }
+
+    fun log(caption: String, vararg text: Any) {
+        if (text.size == 1) {
+            telemetry.addData(caption, text[0])
+            panelsTelemetry.debug(caption + ": " + text[0])
+        } else if (text.size >= 2) {
+            val message = StringBuilder()
+            for (i in text.indices) {
+                message.append(text[i])
+                if (i < text.size - 1) message.append(" ")
+            }
+            telemetry.addData(caption, message.toString())
+            panelsTelemetry.debug("$caption: $message")
         }
     }
 }

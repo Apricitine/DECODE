@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 class PathingDrive : Inheritable() {
     override fun loop() {
         follower!!.update()
-        telemetryM!!.update()
+        panelsTelemetry.update()
         if (!automatedDrive) drive()
         automatedDrive()
         intake()
 
-        telemetryM!!.debug("position", follower!!.pose)
-        telemetryM!!.debug("velocity", follower!!.velocity)
-        telemetryM!!.debug("automatedDrive", automatedDrive)
+        panelsTelemetry.debug("position", follower!!.pose)
+        panelsTelemetry.debug("velocity", follower!!.velocity)
+        panelsTelemetry.debug("automatedDrive", automatedDrive)
     }
 }
