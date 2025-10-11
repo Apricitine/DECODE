@@ -9,6 +9,7 @@ class PathingDrive : Inheritable() {
         telemetryM!!.update()
         if (!automatedDrive) drive()
         automatedDrive()
+        intake()
 
         telemetryM!!.debug("position", follower!!.pose)
         telemetryM!!.debug("velocity", follower!!.velocity)

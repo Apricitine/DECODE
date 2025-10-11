@@ -11,8 +11,16 @@ import com.pedropathing.paths.Path
 import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import java.util.function.Supplier
+
+enum class CarouselStates {
+    ONE,
+    TWO,
+    THREE
+}
 
 @Configurable
 @TeleOp
@@ -24,7 +32,17 @@ abstract class Inheritable : OpMode() {
     private var slowMode = false
     private var slowModeMultiplier = 0.5
 
+    private lateinit var leftIntake: CRServo
+    private lateinit var rightIntake: CRServo
+    private lateinit var carousel: Servo
+
+    private var intakeRunning: Boolean = false;
+
     override fun init() {
+        leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
+        rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
+        carousel = hardwareMap.get(Servo::class.java, "carousel")
+
         follower = createFollower(hardwareMap)
         follower!!.setStartingPose(if (startingPose == null) Pose() else startingPose)
         follower!!.update()
@@ -45,6 +63,7 @@ abstract class Inheritable : OpMode() {
 
     override fun start() {
         follower!!.startTeleopDrive(true)
+        carousel.position = 0.0
     }
 
     companion object {
@@ -75,6 +94,15 @@ abstract class Inheritable : OpMode() {
         if (automatedDrive && (gamepad1.bWasPressed() || !follower!!.isBusy)) {
             follower!!.startTeleopDrive()
             automatedDrive = false
+        }
+    }
+
+    fun intake() {
+        if (gamepad1.xWasPressed()) intakeRunning = !intakeRunning
+
+        if (intakeRunning) {
+            leftIntake.power = -1.0
+            rightIntake.power = 1.0
         }
     }
 }
