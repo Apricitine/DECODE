@@ -37,7 +37,7 @@ abstract class Inheritable : OpMode() {
     private lateinit var rightIntake: CRServo
     private lateinit var carousel: Servo
 
-    private var intakeRunning: Boolean = false;
+    private var intakeRunning: Boolean = false
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
