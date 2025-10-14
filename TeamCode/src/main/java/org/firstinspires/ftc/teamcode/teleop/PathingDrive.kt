@@ -11,8 +11,8 @@ class PathingDrive : Inheritable() {
         automatedDrive()
         intake()
 
-        panelsTelemetry.debug("position", follower!!.pose)
-        panelsTelemetry.debug("velocity", follower!!.velocity)
-        panelsTelemetry.debug("automatedDrive", automatedDrive)
+        log("position", follower!!.pose)
+        log("velocity", follower!!.velocity)
+        log("automatedDrive", automatedDrive)
     }
 }

@@ -36,6 +36,7 @@ abstract class Inheritable : OpMode() {
     private lateinit var leftIntake: CRServo
     private lateinit var rightIntake: CRServo
     private lateinit var carousel: Servo
+    private lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
 
@@ -43,6 +44,8 @@ abstract class Inheritable : OpMode() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
         rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
         carousel = hardwareMap.get(Servo::class.java, "carousel")
+
+        carouselState = CarouselStates.ONE
 
         follower = createFollower(hardwareMap)
         follower!!.setStartingPose(if (startingPose == null) Pose() else startingPose)
@@ -65,6 +68,7 @@ abstract class Inheritable : OpMode() {
     override fun start() {
         follower!!.startTeleopDrive(true)
         carousel.position = 0.0
+        carouselState = CarouselStates.ONE
     }
 
     companion object {
@@ -107,6 +111,23 @@ abstract class Inheritable : OpMode() {
         }
     }
 
+    fun carousel() {
+        if (gamepad1.yWasPressed()) {
+            if (carouselState == CarouselStates.ONE) {
+                carousel.position = 0.3
+                carouselState = CarouselStates.TWO
+            }
+            if (carouselState == CarouselStates.TWO) {
+                carousel.position = 0.6
+                carouselState = CarouselStates.THREE
+            }
+            if (carouselState == CarouselStates.THREE) {
+                carousel.position = 0.0
+                carouselState = CarouselStates.ONE
+            }
+        }
+    }
+
     fun log(caption: String, vararg text: Any) {
         if (text.size == 1) {
             telemetry.addData(caption, text[0])
@@ -120,5 +141,9 @@ abstract class Inheritable : OpMode() {
             telemetry.addData(caption, message.toString())
             panelsTelemetry.debug("$caption: $message")
         }
+    }
+
+    override fun stop() {
+        carousel.position = 0.0
     }
 }
