@@ -36,7 +36,7 @@ abstract class Inheritable : OpMode() {
     private lateinit var leftIntake: CRServo
     private lateinit var rightIntake: CRServo
     private lateinit var carousel: Servo
-    private lateinit var carouselState: CarouselStates
+    protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
 
