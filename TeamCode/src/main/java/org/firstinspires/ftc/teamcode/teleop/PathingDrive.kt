@@ -7,9 +7,11 @@ class PathingDrive : Inheritable() {
     override fun loop() {
         follower!!.update()
         panelsTelemetry.update()
-        if (!automatedDrive) drive()
-        automatedDrive()
+
+        drive()
         intake()
+        carousel()
+        plunger()
 
         log("position", follower!!.pose)
         log("velocity", follower!!.velocity)

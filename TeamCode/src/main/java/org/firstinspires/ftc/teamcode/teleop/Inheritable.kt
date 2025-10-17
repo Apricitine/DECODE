@@ -102,15 +102,15 @@ abstract class Inheritable : OpMode() {
     }
 
     fun automatedDrive() {
-        if (gamepad1.aWasPressed()) {
-            follower!!.followPath(pathChain!!.get())
-            automatedDrive = true
-        }
-
-        if (automatedDrive && (gamepad1.bWasPressed() || !follower!!.isBusy)) {
-            follower!!.startTeleopDrive()
-            automatedDrive = false
-        }
+//        if (x.`is`(Button.States.TAP)) {
+//            follower!!.followPath(pathChain!!.get())
+//            automatedDrive = true
+//        }
+//
+//        if (automatedDrive && (gamepad1.bWasPressed() || !follower!!.isBusy)) {
+//            follower!!.startTeleopDrive()
+//            automatedDrive = false
+//        }
     }
 
     fun intake() {
@@ -176,6 +176,8 @@ abstract class Inheritable : OpMode() {
     fun updateButtons() {
         a.update(gamepad1.a)
         b.update(gamepad1.b)
+        x.update(gamepad1.x)
+        y.update(gamepad1.y)
     }
 
     override fun stop() {
