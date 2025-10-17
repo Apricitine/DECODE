@@ -38,17 +38,23 @@ abstract class Inheritable : OpMode() {
     private lateinit var leftIntake: CRServo
     private lateinit var rightIntake: CRServo
     lateinit var carousel: Servo
+    private lateinit var plunger: Servo
+
     protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
+    private var plungerExtended: Boolean = false
 
-    val a = Button()
+    private val a = Button()
     private val b = Button()
+    private val y = Button()
+    private val x = Button()
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
         rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
         carousel = hardwareMap.get(Servo::class.java, "carousel")
+        plunger = hardwareMap.get(Servo::class.java, "plunger")
 
         carouselState = CarouselStates.ONE
 
@@ -123,7 +129,6 @@ abstract class Inheritable : OpMode() {
         if (a.`is`(Button.States.TAP)) {
             when (carouselState) {
                 CarouselStates.ONE -> {
-                    telemetry.addData("tapped", "true")
                     carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
                     carouselState = CarouselStates.TWO
                 }
@@ -137,6 +142,18 @@ abstract class Inheritable : OpMode() {
                     carousel.direction = Servo.Direction.FORWARD
                     carouselState = CarouselStates.ONE
                 }
+            }
+        }
+    }
+
+    fun plunger() {
+        if (y.`is`(Button.States.TAP)) {
+            if (!plungerExtended) {
+                plunger.position = 0.01
+                plungerExtended = true
+            } else {
+                plunger.position = 0.0
+                plungerExtended = false
             }
         }
     }

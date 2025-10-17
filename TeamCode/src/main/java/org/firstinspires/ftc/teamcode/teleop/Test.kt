@@ -11,6 +11,7 @@ class Test : Inheritable() {
         panelsTelemetry.update()
         intake()
         carousel()
+        plunger()
 
         log("y", gamepad1.yWasReleased())
         log("position", follower!!.pose)
