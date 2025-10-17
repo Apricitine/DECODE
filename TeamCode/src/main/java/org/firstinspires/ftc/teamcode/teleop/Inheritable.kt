@@ -13,7 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
+import org.firstinspires.ftc.teamcode.util.Button
 import java.util.function.Supplier
 
 
@@ -35,10 +37,13 @@ abstract class Inheritable : OpMode() {
 
     private lateinit var leftIntake: CRServo
     private lateinit var rightIntake: CRServo
-    private lateinit var carousel: Servo
+    lateinit var carousel: Servo
     protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
+
+    val a = Button()
+    private val b = Button()
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -67,7 +72,7 @@ abstract class Inheritable : OpMode() {
 
     override fun start() {
         follower!!.startTeleopDrive(true)
-        carousel.position = 0.0
+        carousel.position = 0.02
         carouselState = CarouselStates.ONE
     }
 
@@ -103,27 +108,35 @@ abstract class Inheritable : OpMode() {
     }
 
     fun intake() {
-        if (gamepad1.xWasPressed()) intakeRunning = !intakeRunning
+        if (b.`is`(Button.States.TAP)) intakeRunning = !intakeRunning
 
         if (intakeRunning) {
             leftIntake.power = -1.0
             rightIntake.power = 1.0
+        } else {
+            leftIntake.power = 0.0
+            rightIntake.power = 0.0
         }
     }
 
     fun carousel() {
-        if (gamepad1.yWasPressed()) {
-            if (carouselState == CarouselStates.ONE) {
-                carousel.position = 0.3
-                carouselState = CarouselStates.TWO
-            }
-            if (carouselState == CarouselStates.TWO) {
-                carousel.position = 0.6
-                carouselState = CarouselStates.THREE
-            }
-            if (carouselState == CarouselStates.THREE) {
-                carousel.position = 0.0
-                carouselState = CarouselStates.ONE
+        if (a.`is`(Button.States.TAP)) {
+            when (carouselState) {
+                CarouselStates.ONE -> {
+                    telemetry.addData("tapped", "true")
+                    carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                    carouselState = CarouselStates.TWO
+                }
+                CarouselStates.TWO -> {
+                    carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL*2
+                    carouselState = CarouselStates.THREE
+                }
+                CarouselStates.THREE -> {
+                    carousel.direction = Servo.Direction.REVERSE
+                    carousel.position = 0.0
+                    carousel.direction = Servo.Direction.FORWARD
+                    carouselState = CarouselStates.ONE
+                }
             }
         }
     }
@@ -143,7 +156,12 @@ abstract class Inheritable : OpMode() {
         }
     }
 
+    fun updateButtons() {
+        a.update(gamepad1.a)
+        b.update(gamepad1.b)
+    }
+
     override fun stop() {
-        carousel.position = 0.0
+        carousel.position = 0.02
     }
 }

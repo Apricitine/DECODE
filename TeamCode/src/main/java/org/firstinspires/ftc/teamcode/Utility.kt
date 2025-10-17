@@ -20,4 +20,11 @@ class Utility {
             }
         }
     }
+
+    class Constants {
+
+        companion object {
+            const val SINGLE_ROTATION_CAROUSEL: Double = 0.3733
+        }
+    }
 }
