@@ -38,7 +38,7 @@ abstract class Inheritable : OpMode() {
     private lateinit var leftIntake: CRServo
     private lateinit var rightIntake: CRServo
     lateinit var carousel: Servo
-    private lateinit var plunger: Servo
+    lateinit var plunger: Servo
 
     protected lateinit var carouselState: CarouselStates
 
@@ -79,6 +79,8 @@ abstract class Inheritable : OpMode() {
     override fun start() {
         follower!!.startTeleopDrive(true)
         carousel.position = 0.02
+        plunger.direction = Servo.Direction.REVERSE
+        plunger.position = 0.3
         carouselState = CarouselStates.ONE
     }
 
@@ -133,13 +135,11 @@ abstract class Inheritable : OpMode() {
                     carouselState = CarouselStates.TWO
                 }
                 CarouselStates.TWO -> {
-                    carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL*2
+                    carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                     carouselState = CarouselStates.THREE
                 }
                 CarouselStates.THREE -> {
-                    carousel.direction = Servo.Direction.REVERSE
-                    carousel.position = 0.0
-                    carousel.direction = Servo.Direction.FORWARD
+                    carousel.position = 0.02
                     carouselState = CarouselStates.ONE
                 }
             }
@@ -148,13 +148,14 @@ abstract class Inheritable : OpMode() {
 
     fun plunger() {
         if (y.`is`(Button.States.TAP)) {
-            if (!plungerExtended) {
-                plunger.position = 0.01
-                plungerExtended = true
-            } else {
-                plunger.position = 0.0
-                plungerExtended = false
-            }
+//            if (!plungerExtended) {
+//                plunger.position = 0.01
+//                plungerExtended = true
+//            } else {
+//                plunger.position = 0.0
+//                plungerExtended = false
+//            }
+            plunger.position = 1 - 0.3706
         }
     }
 

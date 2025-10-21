@@ -19,5 +19,6 @@ class Test : Inheritable() {
         log("automatedDrive", automatedDrive)
         log("carousel state", carouselState)
         log("carousel angle", carousel.position)
+        log("plunger angle", plunger.position)
     }
 }
