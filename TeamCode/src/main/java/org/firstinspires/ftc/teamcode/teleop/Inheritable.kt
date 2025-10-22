@@ -44,10 +44,12 @@ abstract class Inheritable : OpMode() {
 
     lateinit var leftLift: DcMotorEx
     lateinit var rightLift: DcMotorEx
+    private lateinit var flywheel: DcMotorEx
 
     protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
+    private var flywheelRunning: Boolean = false
     private var plungerExtended: Boolean = false
 
     private val a = Button()
@@ -63,6 +65,7 @@ abstract class Inheritable : OpMode() {
 
         leftLift = hardwareMap.get(DcMotorEx::class.java, "leftLift")
         rightLift = hardwareMap.get(DcMotorEx::class.java, "rightLift")
+        flywheel = hardwareMap.get(DcMotorEx::class.java, "flywheel")
 
         carouselState = CarouselStates.ONE
 
@@ -147,10 +150,12 @@ abstract class Inheritable : OpMode() {
                     carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
                     carouselState = CarouselStates.TWO
                 }
+
                 CarouselStates.TWO -> {
                     carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                     carouselState = CarouselStates.THREE
                 }
+
                 CarouselStates.THREE -> {
                     carousel.position = 0.02
                     carouselState = CarouselStates.ONE
@@ -176,6 +181,14 @@ abstract class Inheritable : OpMode() {
         else leftLift.power = 0.0
         if (rightLift.currentPosition <= 4600) rightLift.power = -gamepad2.left_stick_y.toDouble()
         else rightLift.power = 0.0
+    }
+
+    fun flywheel() {
+        if (x.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
+
+        if (flywheelRunning) flywheel.power = 1.0
+        else flywheel.power = 0.0
+
     }
 
     fun log(caption: String, vararg text: Any) {

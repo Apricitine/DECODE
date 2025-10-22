@@ -13,6 +13,7 @@ class Test : Inheritable() {
         carousel()
         plunger()
         lift()
+        flywheel()
 
         log("y", gamepad1.yWasReleased())
         log("position", follower!!.pose)
@@ -23,5 +24,6 @@ class Test : Inheritable() {
         log("plunger angle", plunger.position)
         log("left lift amount", leftLift.currentPosition)
         log("right lift amount", rightLift.currentPosition)
+        log("flywheel ", rightLift.currentPosition)
     }
 }
