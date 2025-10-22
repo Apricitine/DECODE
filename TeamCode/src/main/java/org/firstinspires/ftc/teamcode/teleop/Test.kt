@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.util.Button
 
-@TeleOp(name = "PathingDrive", group = "Main")
+@TeleOp(name = "Test", group = "Main")
 class Test : Inheritable() {
     override fun loop() {
         updateButtons()
@@ -12,6 +12,7 @@ class Test : Inheritable() {
         intake()
         carousel()
         plunger()
+        lift()
 
         log("y", gamepad1.yWasReleased())
         log("position", follower!!.pose)
@@ -20,5 +21,7 @@ class Test : Inheritable() {
         log("carousel state", carouselState)
         log("carousel angle", carousel.position)
         log("plunger angle", plunger.position)
+        log("left lift amount", leftLift.currentPosition)
+        log("right lift amount", rightLift.currentPosition)
     }
 }

@@ -12,6 +12,8 @@ import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
@@ -40,6 +42,9 @@ abstract class Inheritable : OpMode() {
     lateinit var carousel: Servo
     lateinit var plunger: Servo
 
+    lateinit var leftLift: DcMotorEx
+    lateinit var rightLift: DcMotorEx
+
     protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
@@ -55,6 +60,9 @@ abstract class Inheritable : OpMode() {
         rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
         carousel = hardwareMap.get(Servo::class.java, "carousel")
         plunger = hardwareMap.get(Servo::class.java, "plunger")
+
+        leftLift = hardwareMap.get(DcMotorEx::class.java, "leftLift")
+        rightLift = hardwareMap.get(DcMotorEx::class.java, "rightLift")
 
         carouselState = CarouselStates.ONE
 
@@ -79,9 +87,14 @@ abstract class Inheritable : OpMode() {
     override fun start() {
         follower!!.startTeleopDrive(true)
         carousel.position = 0.02
-        plunger.direction = Servo.Direction.REVERSE
-        plunger.position = 0.3
         carouselState = CarouselStates.ONE
+        plunger.direction = Servo.Direction.REVERSE
+        plunger.position = 0.02
+        leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+        leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
     companion object {
@@ -148,15 +161,21 @@ abstract class Inheritable : OpMode() {
 
     fun plunger() {
         if (y.`is`(Button.States.TAP)) {
-//            if (!plungerExtended) {
-//                plunger.position = 0.01
-//                plungerExtended = true
-//            } else {
-//                plunger.position = 0.0
-//                plungerExtended = false
-//            }
-            plunger.position = 1 - 0.3706
+            if (!plungerExtended) {
+                plunger.position = 0.33
+                plungerExtended = true
+            } else {
+                plunger.position = 0.0
+                plungerExtended = false
+            }
         }
+    }
+
+    fun lift() {
+        if (leftLift.currentPosition >= -4600) leftLift.power = gamepad2.left_stick_y.toDouble()
+        else leftLift.power = 0.0
+        if (rightLift.currentPosition <= 4600) rightLift.power = -gamepad2.left_stick_y.toDouble()
+        else rightLift.power = 0.0
     }
 
     fun log(caption: String, vararg text: Any) {
