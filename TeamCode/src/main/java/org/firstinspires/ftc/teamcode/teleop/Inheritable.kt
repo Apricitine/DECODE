@@ -186,7 +186,7 @@ abstract class Inheritable : OpMode() {
     fun flywheel() {
         if (x.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
 
-        if (flywheelRunning) flywheel.power = 1.0
+        if (flywheelRunning) flywheel.power = -1.0
         else flywheel.power = 0.0
 
     }

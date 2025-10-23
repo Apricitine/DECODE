@@ -23,7 +23,7 @@ class Constants {
                 .rightFrontMotorName("rightFront")
                 .rightRearMotorName("rightRear")
                 .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-                .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+                .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                 .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
         private var localizerConstants: ThreeWheelIMUConstants =
