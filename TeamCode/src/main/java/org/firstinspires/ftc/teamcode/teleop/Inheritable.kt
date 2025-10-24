@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
+import java.lang.Thread.sleep
 import java.util.function.Supplier
 
 
@@ -98,6 +99,8 @@ abstract class Inheritable : OpMode() {
 
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+        rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
     companion object {
@@ -166,13 +169,9 @@ abstract class Inheritable : OpMode() {
 
     fun plunger() {
         if (y.`is`(Button.States.TAP)) {
-            if (!plungerExtended) {
                 plunger.position = 0.33
-                plungerExtended = true
-            } else {
+                sleep(1000)
                 plunger.position = 0.0
-                plungerExtended = false
-            }
         }
     }
 
@@ -207,10 +206,10 @@ abstract class Inheritable : OpMode() {
     }
 
     fun updateButtons() {
-        a.update(gamepad1.a)
-        b.update(gamepad1.b)
-        x.update(gamepad1.x)
-        y.update(gamepad1.y)
+        a.update(gamepad2.a)
+        b.update(gamepad2.b)
+        x.update(gamepad2.x)
+        y.update(gamepad2.y)
     }
 
     override fun stop() {

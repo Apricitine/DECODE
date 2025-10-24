@@ -29,7 +29,7 @@ class Utility {
     class Constants {
         companion object {
             const val SINGLE_ROTATION_CAROUSEL: Double = 0.4
-            const val DOUBLE_ROTATION_CAROUSEL: Double = 0.78
+            const val DOUBLE_ROTATION_CAROUSEL: Double = 0.775
 
             val GOAL_HEIGHT: Double = 38.75 / 39.37
             val ARTIFACT_EXIT_VELOCITY: Double = 10.0
