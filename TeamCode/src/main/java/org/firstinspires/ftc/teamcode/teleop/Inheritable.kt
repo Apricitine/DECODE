@@ -136,7 +136,7 @@ abstract class Inheritable : OpMode() {
 
     fun intake() {
         if (b.`is`(Button.States.TAP)) {
-            if (!intakeRunning) carousel.position = 0.0
+            if (!intakeRunning) carousel.position = 0.02
             intakeRunning = !intakeRunning
         }
         if (intakeRunning) {
