@@ -172,7 +172,7 @@ abstract class Inheritable : OpMode() {
     fun plunger() {
         if (y.`is`(Button.States.TAP)) {
                 plunger.position = 0.33
-                sleep(100)
+                sleep(250)
                 plunger.position = 0.0
         }
     }
