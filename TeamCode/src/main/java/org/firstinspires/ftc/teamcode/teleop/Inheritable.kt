@@ -51,7 +51,6 @@ abstract class Inheritable : OpMode() {
 
     private var intakeRunning: Boolean = false
     private var flywheelRunning: Boolean = false
-    private var plungerExtended: Boolean = false
 
     private val a = Button()
     private val b = Button()
