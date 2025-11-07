@@ -14,6 +14,7 @@ class Test : Inheritable() {
         plunger()
         lift()
         flywheel()
+        hood()
 
         log("y", gamepad1.yWasReleased())
         log("position", follower!!.pose)
@@ -25,5 +26,6 @@ class Test : Inheritable() {
         log("left lift amount", leftLift.currentPosition)
         log("right lift amount", rightLift.currentPosition)
         log("flywheel ", rightLift.currentPosition)
+        log("hood", hood.position)
     }
 }

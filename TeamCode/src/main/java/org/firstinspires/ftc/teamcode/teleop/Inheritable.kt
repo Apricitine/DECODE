@@ -42,6 +42,7 @@ abstract class Inheritable : OpMode() {
     private lateinit var rightIntake: CRServo
     lateinit var carousel: Servo
     lateinit var plunger: Servo
+    lateinit var hood: Servo
 
     lateinit var leftLift: DcMotorEx
     lateinit var rightLift: DcMotorEx
@@ -51,17 +52,20 @@ abstract class Inheritable : OpMode() {
 
     private var intakeRunning: Boolean = false
     private var flywheelRunning: Boolean = false
+    private var hoodUp: Boolean = false
 
     private val a = Button()
     private val b = Button()
     private val y = Button()
     private val x = Button()
+    private val rightBumper = Button()
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
         rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
         carousel = hardwareMap.get(Servo::class.java, "carousel")
         plunger = hardwareMap.get(Servo::class.java, "plunger")
+        hood = hardwareMap.get(Servo::class.java, "hood")
 
         leftLift = hardwareMap.get(DcMotorEx::class.java, "leftLift")
         rightLift = hardwareMap.get(DcMotorEx::class.java, "rightLift")
@@ -89,12 +93,14 @@ abstract class Inheritable : OpMode() {
 
     override fun start() {
         follower!!.startTeleopDrive(true)
-        carousel.position = 0.02
+        carousel.position = 0.005
         carouselState = CarouselStates.ONE
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
         leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        hood.position = 1.0
+        hood.direction = Servo.Direction.REVERSE
 
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -133,8 +139,8 @@ abstract class Inheritable : OpMode() {
 //        }
     }
 
-    fun intake() {
-        if (b.`is`(Button.States.TAP)) {
+    fun intake(button: Button) {
+        if (button.`is`(Button.States.TAP)) {
             if (!intakeRunning) carousel.position = 0.02
             intakeRunning = !intakeRunning
         }
@@ -147,32 +153,38 @@ abstract class Inheritable : OpMode() {
         }
     }
 
-    fun carousel() {
-        if (a.`is`(Button.States.TAP)) {
-            when (carouselState) {
-                CarouselStates.ONE -> {
-                    carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                    carouselState = CarouselStates.TWO
-                }
-
-                CarouselStates.TWO -> {
-                    carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                    carouselState = CarouselStates.THREE
-                }
-
-                CarouselStates.THREE -> {
-                    carousel.position = 0.02
-                    carouselState = CarouselStates.ONE
-                }
+    fun hood(button: Button) {
+        if (button.`is`(Button.States.TAP)) {
+            if (!hoodUp) {
+                hood.position = 0.07
+                hoodUp = true
+            } else {
+                hood.position = 0.0
+                hoodUp = false
             }
         }
     }
 
-    fun plunger() {
-        if (y.`is`(Button.States.TAP)) {
-                plunger.position = 0.33
-                sleep(250)
-                plunger.position = 0.0
+    fun carousel(primary: Button, secondary: Button, tertiary: Button) {
+        if (primary.`is`(Button.States.TAP)) {
+            carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+            carouselState = CarouselStates.THREE
+        }
+        if (secondary.`is`(Button.States.TAP)) {
+            carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+            carouselState = CarouselStates.TWO
+        }
+        if (tertiary.`is`(Button.States.TAP)) {
+            carousel.position = 0.02
+            carouselState = CarouselStates.ONE
+        }
+    }
+
+    fun plunger(button: Button) {
+        if (button.`is`(Button.States.TAP)) {
+            plunger.position = 0.33
+            sleep(350)
+            plunger.position = 0.0
         }
     }
 
@@ -183,8 +195,8 @@ abstract class Inheritable : OpMode() {
         else rightLift.power = 0.0
     }
 
-    fun flywheel() {
-        if (x.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
+    fun flywheel(button: Button) {
+        if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
 
         if (flywheelRunning) flywheel.power = -0.65
         else flywheel.power = 0.0
@@ -211,9 +223,7 @@ abstract class Inheritable : OpMode() {
         b.update(gamepad2.b)
         x.update(gamepad2.x)
         y.update(gamepad2.y)
+        rightBumper.update(gamepad2.right_bumper)
     }
 
-    override fun stop() {
-        carousel.position = 0.02
-    }
 }
