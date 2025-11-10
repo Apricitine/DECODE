@@ -54,11 +54,13 @@ abstract class Inheritable : OpMode() {
     private var flywheelRunning: Boolean = false
     private var hoodUp: Boolean = false
 
-    private val a = Button()
-    private val b = Button()
-    private val y = Button()
-    private val x = Button()
-    private val rightBumper = Button()
+    val a = Button()
+    val b = Button()
+    val y = Button()
+    val x = Button()
+    val rightBumper = Button()
+    val rightTrigger = Button()
+    val leftBumper = Button()
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -224,6 +226,8 @@ abstract class Inheritable : OpMode() {
         x.update(gamepad2.x)
         y.update(gamepad2.y)
         rightBumper.update(gamepad2.right_bumper)
+        rightTrigger.update(gamepad2.right_trigger > 0.1)
+        leftBumper.update(gamepad2.left_bumper)
     }
 
 }
