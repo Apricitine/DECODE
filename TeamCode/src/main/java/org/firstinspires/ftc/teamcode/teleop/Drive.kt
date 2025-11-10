@@ -9,6 +9,7 @@ class Drive : Inheritable() {
         follower!!.update()
         panelsTelemetry.update()
 
+        tags()
         drive()
 
         log("position", follower!!.pose)

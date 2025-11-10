@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+import android.annotation.SuppressLint
 import com.bylazar.configurables.annotations.Configurable
 import com.bylazar.telemetry.PanelsTelemetry
 import com.bylazar.telemetry.TelemetryManager
@@ -15,11 +16,15 @@ import com.qualcomm.robotcore.hardware.CRServo
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
+import org.firstinspires.ftc.vision.VisionPortal
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.Thread.sleep
 import java.util.function.Supplier
+import kotlin.text.*
 
 
 enum class CarouselStates {
@@ -54,6 +59,9 @@ abstract class Inheritable : OpMode() {
     private var flywheelRunning: Boolean = false
     private var hoodUp: Boolean = false
 
+    private lateinit var processor: AprilTagProcessor
+    private lateinit var portal: VisionPortal
+
     val a = Button()
     val b = Button()
     val y = Button()
@@ -78,6 +86,7 @@ abstract class Inheritable : OpMode() {
         follower = createFollower(hardwareMap)
         follower!!.setStartingPose(if (startingPose == null) Pose() else startingPose)
         follower!!.update()
+        initializeProcessor()
         panelsTelemetry = PanelsTelemetry.telemetry
         pathChain = Supplier {
             follower!!.pathBuilder()
@@ -230,4 +239,27 @@ abstract class Inheritable : OpMode() {
         leftBumper.update(gamepad2.left_bumper)
     }
 
+    private fun initializeProcessor() {
+        processor = AprilTagProcessor.Builder().build()
+        val builder = VisionPortal.Builder()
+
+        builder.setCamera(hardwareMap.get(WebcamName::class.java, "webcam"))
+        builder.addProcessor(processor)
+        portal = builder.build()
+    }
+
+    @SuppressLint("DefaultLocale")
+    fun tags() {
+        val detections = processor.detections
+        log("tags detected", detections.size)
+
+        for (detection in detections) {
+            if (detection.metadata != null) {
+                log(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name))
+                log(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z))
+                log(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw))
+                log(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation))
+            }
+        }
+    }
 }

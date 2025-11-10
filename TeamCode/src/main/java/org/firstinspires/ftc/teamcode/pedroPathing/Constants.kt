@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 class Constants {
     companion object {
-        private var followerConstants: FollowerConstants = FollowerConstants().mass(11.8)
+        private var followerConstants: FollowerConstants = FollowerConstants().mass(12.5)
         private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
         private var mecanumConstants: MecanumConstants =
             MecanumConstants()
