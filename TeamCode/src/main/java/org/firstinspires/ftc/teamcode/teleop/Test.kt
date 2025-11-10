@@ -9,7 +9,7 @@ class Test : Inheritable() {
         updateButtons()
         follower!!.update()
         panelsTelemetry.update()
-        intake()
+        intake(gamepad1.)
         carousel()
         plunger()
         lift()

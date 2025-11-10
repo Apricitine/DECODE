@@ -10,11 +10,6 @@ class Drive : Inheritable() {
         panelsTelemetry.update()
 
         drive()
-        intake()
-        carousel()
-        plunger()
-        lift()
-        flywheel()
 
         log("position", follower!!.pose)
         log("velocity", follower!!.velocity)
