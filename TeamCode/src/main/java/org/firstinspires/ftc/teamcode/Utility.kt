@@ -32,6 +32,12 @@ class Utility {
             const val SINGLE_ROTATION_CAROUSEL: Double = 0.395
             const val DOUBLE_ROTATION_CAROUSEL: Double = 0.775
 
+            const val LIFT_STAGE_ZERO: Double = 0.0
+            const val LIFT_STAGE_ONE: Double = 1150.0
+            const val LIFT_STAGE_TWO: Double = 2300.0
+            const val LIFT_STAGE_THREE: Double = 3450.0
+            const val LIFT_STAGE_FOUR: Double = 4600.0
+
             val GOAL_HEIGHT: Double = 38.75 / 39.37
             val ARTIFACT_EXIT_VELOCITY: Double = 10.0
         }

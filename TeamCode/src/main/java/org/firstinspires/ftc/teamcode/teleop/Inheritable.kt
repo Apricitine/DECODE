@@ -38,6 +38,14 @@ enum class CarouselStates {
     THREE
 }
 
+enum class LiftStages {
+    ZERO,
+    ONE,
+    TWO,
+    THREE,
+    FOUR
+}
+
 @Configurable
 @TeleOp
 abstract class Inheritable : OpMode() {
@@ -66,6 +74,8 @@ abstract class Inheritable : OpMode() {
 
     private lateinit var processor: AprilTagProcessor
     private lateinit var portal: VisionPortal
+
+    private var liftState = LiftStages.ZERO
 
     val a = Button()
     val b = Button()
@@ -200,10 +210,44 @@ abstract class Inheritable : OpMode() {
     }
 
     fun lift() {
-        if (leftLift.currentPosition >= -4600) leftLift.power = gamepad2.left_stick_y.toDouble()
-        else leftLift.power = 0.0
-        if (rightLift.currentPosition <= 4600) rightLift.power = -gamepad2.left_stick_y.toDouble()
-        else rightLift.power = 0.0
+        log("lift state", liftState)
+        if (liftState == LiftStages.ZERO) {
+            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_ONE) leftLift.power =
+                gamepad2.left_stick_y.toDouble()
+            else leftLift.power = 0.0
+            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_ONE) rightLift.power =
+                -gamepad2.left_stick_y.toDouble()
+            else rightLift.power = 0.0
+            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_ONE && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_ONE) liftState =
+                LiftStages.ONE
+        } else if (liftState == LiftStages.ONE) {
+            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_TWO) leftLift.power =
+                gamepad2.left_stick_y.toDouble()
+            else leftLift.power = 0.0
+            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_TWO) rightLift.power =
+                -gamepad2.left_stick_y.toDouble()
+            else rightLift.power = 0.0
+            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_TWO && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_TWO) liftState =
+                LiftStages.TWO
+        } else if (liftState == LiftStages.TWO) {
+            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_THREE) leftLift.power =
+                gamepad2.left_stick_y.toDouble()
+            else leftLift.power = 0.0
+            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_THREE) rightLift.power =
+                -gamepad2.left_stick_y.toDouble()
+            else rightLift.power = 0.0
+            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_THREE && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_THREE) liftState =
+                LiftStages.THREE
+        } else if (liftState == LiftStages.THREE) {
+            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_FOUR) leftLift.power =
+                gamepad2.left_stick_y.toDouble()
+            else leftLift.power = 0.0
+            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_FOUR) rightLift.power =
+                -gamepad2.left_stick_y.toDouble()
+            else rightLift.power = 0.0
+            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_FOUR && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_FOUR) liftState =
+                LiftStages.FOUR
+        }
     }
 
     fun flywheel(button: Button) {
