@@ -26,6 +26,11 @@ import java.lang.Thread.sleep
 import java.util.function.Supplier
 import kotlin.text.*
 
+enum class ObeliskStates {
+    GPP,
+    PGP,
+    PPG
+}
 
 enum class CarouselStates {
     ONE,
@@ -69,6 +74,8 @@ abstract class Inheritable : OpMode() {
     val rightBumper = Button()
     val rightTrigger = Button()
     val leftBumper = Button()
+
+    lateinit var obeliskState: ObeliskStates
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -136,18 +143,6 @@ abstract class Inheritable : OpMode() {
             -gamepad1.right_stick_x * slowModeMultiplier,
             true
         )
-    }
-
-    fun automatedDrive() {
-//        if (x.`is`(Button.States.TAP)) {
-//            follower!!.followPath(pathChain!!.get())
-//            automatedDrive = true
-//        }
-//
-//        if (automatedDrive && (gamepad1.bWasPressed() || !follower!!.isBusy)) {
-//            follower!!.startTeleopDrive()
-//            automatedDrive = false
-//        }
     }
 
     fun intake(button: Button) {
@@ -249,16 +244,16 @@ abstract class Inheritable : OpMode() {
     }
 
     @SuppressLint("DefaultLocale")
-    fun tags() {
+    fun obeliskTag() {
         val detections = processor.detections
         log("tags detected", detections.size)
 
         for (detection in detections) {
             if (detection.metadata != null) {
-                log(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name))
-                log(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z))
-                log(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw))
-                log(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation))
+                if (detection.id == 21) obeliskState = ObeliskStates.GPP
+                if (detection.id == 22) obeliskState = ObeliskStates.PGP
+                if (detection.id == 23) obeliskState = ObeliskStates.PPG
+                log("tag", obeliskState)
             }
         }
     }

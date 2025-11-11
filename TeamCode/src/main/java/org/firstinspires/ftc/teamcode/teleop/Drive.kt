@@ -9,7 +9,13 @@ class Drive : Inheritable() {
         follower!!.update()
         panelsTelemetry.update()
 
-        tags()
+        intake(rightBumper)
+        carousel(y, b, x)
+        plunger(a)
+        lift()
+        flywheel(rightTrigger)
+        hood(leftBumper)
+        obeliskTag()
         drive()
 
         log("position", follower!!.pose)
