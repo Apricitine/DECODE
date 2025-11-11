@@ -15,6 +15,7 @@ class Drive : Inheritable() {
         lift()
         flywheel(rightTrigger)
         hood(leftBumper)
+        fullCycle(up)
         obeliskTag()
         drive()
 

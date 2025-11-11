@@ -71,6 +71,7 @@ abstract class Inheritable : OpMode() {
     val b = Button()
     val y = Button()
     val x = Button()
+    val up = Button()
     val rightBumper = Button()
     val rightTrigger = Button()
     val leftBumper = Button()
@@ -188,10 +189,14 @@ abstract class Inheritable : OpMode() {
 
     fun plunger(button: Button) {
         if (button.`is`(Button.States.TAP)) {
-            plunger.position = 0.33
-            sleep(350)
-            plunger.position = 0.0
+            plungerMotion()
         }
+    }
+
+    private fun plungerMotion() {
+        plunger.position = 0.33
+        sleep(350)
+        plunger.position = 0.0
     }
 
     fun lift() {
@@ -206,7 +211,6 @@ abstract class Inheritable : OpMode() {
 
         if (flywheelRunning) flywheel.power = -0.65
         else flywheel.power = 0.0
-
     }
 
     fun log(caption: String, vararg text: Any) {
@@ -224,11 +228,30 @@ abstract class Inheritable : OpMode() {
         }
     }
 
+    fun fullCycle(button: Button) {
+        if (button.`is`(Button.States.TAP)) {
+            flywheelRunning = true
+            plungerMotion()
+            sleep(300)
+            carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+            sleep(200)
+            plungerMotion()
+            sleep(300)
+            carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+            sleep(200)
+            plungerMotion()
+            sleep(300)
+            carousel.position = 0.02
+            flywheelRunning = false
+        }
+    }
+
     fun updateButtons() {
         a.update(gamepad2.a)
         b.update(gamepad2.b)
         x.update(gamepad2.x)
         y.update(gamepad2.y)
+        up.update(gamepad2.dpad_up)
         rightBumper.update(gamepad2.right_bumper)
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
