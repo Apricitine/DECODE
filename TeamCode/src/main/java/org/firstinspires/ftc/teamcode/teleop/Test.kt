@@ -8,7 +8,7 @@ class Test : Inheritable() {
         updateButtons()
         follower!!.update()
         panelsTelemetry.update()
-        intake(rightBumper)
+        intake(rightBumper, leftBumper)
         carousel(y, b, x)
         plunger(a)
         lift()

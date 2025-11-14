@@ -9,12 +9,12 @@ class Drive : Inheritable() {
         follower!!.update()
         panelsTelemetry.update()
 
-        intake(rightBumper)
+        intake(rightBumper, leftBumper)
         carousel(y, b, x)
         plunger(a)
-        lift()
+        lift() //hi i am luke and i stink. im a poo poo head
         flywheel(rightTrigger)
-        hood(leftBumper)
+        hood(leftTrigger)
         fullCycle(up)
         obeliskTag()
         drive()

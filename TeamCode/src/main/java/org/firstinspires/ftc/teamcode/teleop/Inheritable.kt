@@ -24,9 +24,9 @@ import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.Thread.sleep
 import java.util.function.Supplier
-import kotlin.text.*
 
 enum class ObeliskStates {
+    NONE,
     GPP,
     PGP,
     PPG
@@ -69,11 +69,13 @@ abstract class Inheritable : OpMode() {
     protected lateinit var carouselState: CarouselStates
 
     private var intakeRunning: Boolean = false
+    private var intakeReverseRunning: Boolean = false
     private var flywheelRunning: Boolean = false
     private var hoodUp: Boolean = false
 
     private lateinit var processor: AprilTagProcessor
     private lateinit var portal: VisionPortal
+    private var plungerBusy: Boolean = false
 
     private var liftState = LiftStages.ZERO
 
@@ -85,8 +87,9 @@ abstract class Inheritable : OpMode() {
     val rightBumper = Button()
     val rightTrigger = Button()
     val leftBumper = Button()
+    val leftTrigger = Button()
 
-    lateinit var obeliskState: ObeliskStates
+    private var obeliskState: ObeliskStates = ObeliskStates.NONE
 
     override fun init() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -122,7 +125,7 @@ abstract class Inheritable : OpMode() {
 
     override fun start() {
         follower!!.startTeleopDrive(true)
-        carousel.position = 0.005
+        carousel.position = Utility.Constants.BASE
         carouselState = CarouselStates.ONE
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
@@ -156,14 +159,25 @@ abstract class Inheritable : OpMode() {
         )
     }
 
-    fun intake(button: Button) {
+    fun intake(button: Button, reverseButton: Button) {
         if (button.`is`(Button.States.TAP)) {
-            if (!intakeRunning) carousel.position = 0.02
+            carousel.position = Utility.Constants.BASE
             intakeRunning = !intakeRunning
+            intakeReverseRunning = false
         }
+
+        if (reverseButton.`is`(Button.States.TAP)) {
+            carousel.position = Utility.Constants.BASE
+            intakeReverseRunning = !intakeReverseRunning
+            intakeRunning = false
+        }
+
         if (intakeRunning) {
             leftIntake.power = -1.0
             rightIntake.power = 1.0
+        } else if (intakeReverseRunning) {
+            leftIntake.power = 1.0
+            rightIntake.power = -1.0
         } else {
             leftIntake.power = 0.0
             rightIntake.power = 0.0
@@ -183,17 +197,19 @@ abstract class Inheritable : OpMode() {
     }
 
     fun carousel(primary: Button, secondary: Button, tertiary: Button) {
-        if (primary.`is`(Button.States.TAP)) {
-            carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-            carouselState = CarouselStates.THREE
-        }
-        if (secondary.`is`(Button.States.TAP)) {
-            carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-            carouselState = CarouselStates.TWO
-        }
-        if (tertiary.`is`(Button.States.TAP)) {
-            carousel.position = 0.02
-            carouselState = CarouselStates.ONE
+        if (!plungerBusy) {
+            if (primary.`is`(Button.States.TAP)) {
+                carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                carouselState = CarouselStates.THREE
+            }
+            if (secondary.`is`(Button.States.TAP)) {
+                carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                carouselState = CarouselStates.TWO
+            }
+            if (tertiary.`is`(Button.States.TAP)) {
+                carousel.position = 0.02
+                carouselState = CarouselStates.ONE
+            }
         }
     }
 
@@ -204,9 +220,11 @@ abstract class Inheritable : OpMode() {
     }
 
     private fun plungerMotion() {
+        plungerBusy = true
         plunger.position = 0.33
         sleep(350)
         plunger.position = 0.0
+        plungerBusy = false
     }
 
     fun lift() {
@@ -299,6 +317,7 @@ abstract class Inheritable : OpMode() {
         rightBumper.update(gamepad2.right_bumper)
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
+        leftTrigger.update(gamepad2.left_trigger > 0.1)
     }
 
     private fun initializeProcessor() {
