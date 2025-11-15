@@ -12,7 +12,7 @@ class Drive : Inheritable() {
         intake(rightBumper, leftBumper)
         carousel(y, b, x)
         plunger(a)
-        lift() //hi i am luke and i stink. im a poo poo head
+        lift()
         flywheel(rightTrigger)
         hood(leftTrigger)
         fullCycle(up)
