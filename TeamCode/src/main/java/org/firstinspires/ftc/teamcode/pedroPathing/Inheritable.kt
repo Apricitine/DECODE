@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing
 
+import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
@@ -13,8 +15,13 @@ class Inheritable : Subsystems() {
 
     val runtime = ElapsedTime()
 
+    object PathChains : PathChain() {
+        lateinit var scorePreload: PathChain
+    }
+
     object Poses {
         val startPose = Pose()
+        val scorePose = Pose()
     }
 
     override fun init() {
@@ -29,6 +36,14 @@ class Inheritable : Subsystems() {
         follower.update()
         panelsTelemetry.update()
         currentPose = follower.pose
+
+        buildPreloadPath()
     }
 
+    fun buildPreloadPath() {
+        PathChains.scorePreload =
+            follower.pathBuilder().addPath(BezierLine(Poses.startPose, Poses.scorePose))
+                .setLinearHeadingInterpolation(Poses.startPose.heading, Poses.scorePose.heading)
+                .build()
+    }
 }
