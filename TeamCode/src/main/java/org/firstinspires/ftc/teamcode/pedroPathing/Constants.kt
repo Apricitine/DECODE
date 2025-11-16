@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 
 class Constants {
     companion object {
-        private var followerConstants: FollowerConstants = FollowerConstants().mass(12.5)
+        private var followerConstants: FollowerConstants = FollowerConstants().mass(13.51)
         private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
         private var mecanumConstants: MecanumConstants =
             MecanumConstants()
@@ -32,7 +32,7 @@ class Constants {
                     RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                     RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
-            )
+            ).leftPodY(3.125).rightPodY(-3.125).strafePodX(-4.25)
 
         @JvmStatic
         fun createFollower(hardwareMap: HardwareMap?): Follower {
