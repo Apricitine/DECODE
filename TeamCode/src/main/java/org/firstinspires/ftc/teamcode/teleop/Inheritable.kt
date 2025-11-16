@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
@@ -48,22 +49,13 @@ enum class LiftStages {
 
 @Configurable
 @TeleOp
-abstract class Inheritable : OpMode() {
+abstract class Inheritable : Subsystems() {
     protected var follower: Follower? = null
     protected var automatedDrive = false
     private var pathChain: Supplier<PathChain>? = null
     lateinit var panelsTelemetry: TelemetryManager
     private var slowMode = false
     private var slowModeMultiplier = 0.5
-    private lateinit var leftIntake: CRServo
-    private lateinit var rightIntake: CRServo
-    lateinit var carousel: Servo
-    lateinit var plunger: Servo
-    lateinit var hood: Servo
-
-    lateinit var leftLift: DcMotorEx
-    lateinit var rightLift: DcMotorEx
-    private lateinit var flywheel: DcMotorEx
     protected lateinit var carouselState: CarouselStates
     private var intakeRunning: Boolean = false
     private var intakeReverseRunning: Boolean = false
@@ -89,15 +81,7 @@ abstract class Inheritable : OpMode() {
     private var obeliskState: ObeliskStates = ObeliskStates.NONE
 
     override fun init() {
-        leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
-        rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
-        carousel = hardwareMap.get(Servo::class.java, "carousel")
-        plunger = hardwareMap.get(Servo::class.java, "plunger")
-        hood = hardwareMap.get(Servo::class.java, "hood")
-
-        leftLift = hardwareMap.get(DcMotorEx::class.java, "leftLift")
-        rightLift = hardwareMap.get(DcMotorEx::class.java, "rightLift")
-        flywheel = hardwareMap.get(DcMotorEx::class.java, "flywheel")
+        initializeSubsystems()
 
         carouselState = CarouselStates.ONE
 
