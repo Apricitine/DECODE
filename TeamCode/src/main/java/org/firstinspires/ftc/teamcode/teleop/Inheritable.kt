@@ -50,20 +50,14 @@ enum class LiftStages {
 @Configurable
 @TeleOp
 abstract class Inheritable : Subsystems() {
-    protected var follower: Follower? = null
-    protected var automatedDrive = false
-    private var pathChain: Supplier<PathChain>? = null
-    lateinit var panelsTelemetry: TelemetryManager
     private var slowMode = false
     private var slowModeMultiplier = 0.5
-    protected lateinit var carouselState: CarouselStates
+    protected var carouselState: CarouselStates = CarouselStates.ONE
     private var intakeRunning: Boolean = false
     private var intakeReverseRunning: Boolean = false
     private var flywheelRunning: Boolean = false
     private var hoodUp: Boolean = false
 
-    private lateinit var processor: AprilTagProcessor
-    private lateinit var portal: VisionPortal
     private var plungerBusy: Boolean = false
 
     private var liftState = LiftStages.ZERO
@@ -82,30 +76,14 @@ abstract class Inheritable : Subsystems() {
 
     override fun init() {
         initializeSubsystems()
-
-        carouselState = CarouselStates.ONE
-
         follower = createFollower(hardwareMap)
-        follower!!.setStartingPose(if (startingPose == null) Pose() else startingPose)
-        follower!!.update()
+        follower.update()
         initializeProcessor()
-        panelsTelemetry = PanelsTelemetry.telemetry
-        pathChain = Supplier {
-            follower!!.pathBuilder()
-                .addPath(Path(BezierLine({ follower!!.pose }, Pose(45.0, 98.0))))
-                .setHeadingInterpolation(
-                    HeadingInterpolator.linearFromPoint(
-                        { follower!!.heading },
-                        Math.toRadians(45.0),
-                        0.8
-                    )
-                )
-                .build()
-        }
+
     }
 
     override fun start() {
-        follower!!.startTeleopDrive(true)
+        follower.startTeleopDrive(true)
         carousel.position = Utility.Constants.BASE
         carouselState = CarouselStates.ONE
         plunger.direction = Servo.Direction.REVERSE
@@ -257,21 +235,6 @@ abstract class Inheritable : Subsystems() {
         else flywheel.power = 0.0
     }
 
-    fun log(caption: String, vararg text: Any) {
-        if (text.size == 1) {
-            telemetry.addData(caption, text[0])
-            panelsTelemetry.debug(caption + ": " + text[0])
-        } else if (text.size >= 2) {
-            val message = StringBuilder()
-            for (i in text.indices) {
-                message.append(text[i])
-                if (i < text.size - 1) message.append(" ")
-            }
-            telemetry.addData(caption, message.toString())
-            panelsTelemetry.debug("$caption: $message")
-        }
-    }
-
     fun fullCycle(button: Button) {
         if (button.`is`(Button.States.TAP)) {
             flywheelRunning = true
@@ -300,29 +263,5 @@ abstract class Inheritable : Subsystems() {
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
         leftTrigger.update(gamepad2.left_trigger > 0.1)
-    }
-
-    private fun initializeProcessor() {
-        processor = AprilTagProcessor.Builder().build()
-        val builder = VisionPortal.Builder()
-
-        builder.setCamera(hardwareMap.get(WebcamName::class.java, "webcam"))
-        builder.addProcessor(processor)
-        portal = builder.build()
-    }
-
-    @SuppressLint("DefaultLocale")
-    fun obeliskTag() {
-        val detections = processor.detections
-        log("tags detected", detections.size)
-
-        for (detection in detections) {
-            if (detection.metadata != null) {
-                if (detection.id == 21) obeliskState = ObeliskStates.GPP
-                if (detection.id == 22) obeliskState = ObeliskStates.PGP
-                if (detection.id == 23) obeliskState = ObeliskStates.PPG
-                log("tag", obeliskState)
-            }
-        }
     }
 }
