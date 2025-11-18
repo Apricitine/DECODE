@@ -96,4 +96,10 @@ abstract class Subsystems : OpMode() {
             return COLORS.NONE
         }
     }
+
+    fun updateColors() {
+        frontColor = identifyColor(frontSensor)
+        rightColor = identifyColor(rightSensor)
+        leftColor = identifyColor(leftSensor)
+    }
 }

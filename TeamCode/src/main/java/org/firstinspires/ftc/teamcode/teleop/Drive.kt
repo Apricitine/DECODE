@@ -17,12 +17,12 @@ class Drive : Inheritable() {
         hood(leftTrigger)
         fullCycle(up)
         drive()
+        updateColors()
 
 
         log("position", follower.pose)
         log("velocity", follower.velocity)
         log("carousel angle", carousel.position)
         log("plunger angle", plunger.position)
-        log("right sensor", identifyColor(rightSensor))
     }
 }
