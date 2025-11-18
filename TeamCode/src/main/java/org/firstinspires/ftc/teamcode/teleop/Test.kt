@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 class Test : Inheritable() {
     override fun loop() {
         updateButtons()
-        follower!!.update()
+        follower.update()
         panelsTelemetry.update()
         intake(rightBumper, leftBumper)
         carousel(y, b, x)
@@ -16,9 +16,8 @@ class Test : Inheritable() {
         hood(leftBumper)
 
         log("y", gamepad1.yWasReleased())
-        log("position", follower!!.pose)
-        log("velocity", follower!!.velocity)
-        log("automatedDrive", automatedDrive)
+        log("position", follower.pose)
+        log("velocity", follower.velocity)
         log("carousel state", carouselState)
         log("carousel angle", carousel.position)
         log("plunger angle", plunger.position)

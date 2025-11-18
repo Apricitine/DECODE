@@ -40,6 +40,13 @@ class Utility {
 
             val GOAL_HEIGHT: Double = 38.75 / 39.37
             val ARTIFACT_EXIT_VELOCITY: Double = 10.0
+
+
+            object Purple {
+                val red = 0.0013122
+                val blue = 0.0022583
+                val green = 0.0017853
+            }
         }
     }
 }

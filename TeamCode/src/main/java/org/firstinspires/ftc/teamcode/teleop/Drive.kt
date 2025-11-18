@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 class Drive : Inheritable() {
     override fun loop() {
         updateButtons()
-        follower!!.update()
+        follower.update()
         panelsTelemetry.update()
 
         intake(rightBumper, leftBumper)
@@ -16,12 +16,13 @@ class Drive : Inheritable() {
         flywheel(rightTrigger)
         hood(leftTrigger)
         fullCycle(up)
-        obeliskTag()
         drive()
 
-        log("position", follower!!.pose)
-        log("velocity", follower!!.velocity)
+
+        log("position", follower.pose)
+        log("velocity", follower.velocity)
         log("carousel angle", carousel.position)
         log("plunger angle", plunger.position)
+        log("right sensor", identifyColor(rightSensor))
     }
 }

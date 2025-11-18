@@ -155,17 +155,17 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun carousel(primary: Button, secondary: Button, tertiary: Button) {
+    fun carousel(front: Button, right: Button, left: Button) {
         if (!plungerBusy) {
-            if (primary.`is`(Button.States.TAP)) {
+            if (front.`is`(Button.States.TAP)) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                 carouselState = CarouselStates.THREE
             }
-            if (secondary.`is`(Button.States.TAP)) {
+            if (right.`is`(Button.States.TAP)) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
                 carouselState = CarouselStates.TWO
             }
-            if (tertiary.`is`(Button.States.TAP)) {
+            if (left.`is`(Button.States.TAP)) {
                 carousel.position = 0.02
                 carouselState = CarouselStates.ONE
             }
@@ -263,5 +263,6 @@ abstract class Inheritable : Subsystems() {
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
         leftTrigger.update(gamepad2.left_trigger > 0.1)
+
     }
 }
