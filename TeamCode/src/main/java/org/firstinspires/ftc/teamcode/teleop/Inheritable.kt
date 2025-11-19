@@ -67,6 +67,10 @@ abstract class Inheritable : Subsystems() {
     val y = Button()
     val x = Button()
     val up = Button()
+    val right = Button()
+    val left = Button()
+    val down = Button()
+
     val rightBumper = Button()
     val rightTrigger = Button()
     val leftBumper = Button()
@@ -186,6 +190,39 @@ abstract class Inheritable : Subsystems() {
         plungerBusy = false
     }
 
+    fun quickShot(greenButton: Button, purpleButton: Button) {
+        if (greenButton.`is`(Button.States.TAP)) {
+            if (frontColor == COLORS.GREEN) {
+                carousel.position = Utility.Constants.BASE
+                sleep(300)
+                plungerMotion()
+            } else if (rightColor == COLORS.GREEN) {
+                carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                sleep(300)
+                plungerMotion()
+            } else if (leftColor == COLORS.GREEN) {
+                carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                sleep(300)
+                plungerMotion()
+            }
+        }
+        if (purpleButton.`is`(Button.States.TAP)) {
+            if (frontColor == COLORS.PURPLE) {
+                carousel.position = Utility.Constants.BASE
+                sleep(300)
+                plungerMotion()
+            } else if (rightColor == COLORS.PURPLE) {
+                carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                sleep(300)
+                plungerMotion()
+            } else if (leftColor == COLORS.PURPLE) {
+                carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                sleep(300)
+                plungerMotion()
+            }
+        }
+    }
+
     fun lift() {
         log("lift state", liftState)
         if (liftState == LiftStages.ZERO) {
@@ -259,6 +296,9 @@ abstract class Inheritable : Subsystems() {
         x.update(gamepad2.x)
         y.update(gamepad2.y)
         up.update(gamepad2.dpad_up)
+        right.update(gamepad2.dpad_right)
+        left.update(gamepad2.dpad_left)
+        down.update(gamepad2.dpad_down)
         rightBumper.update(gamepad2.right_bumper)
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)

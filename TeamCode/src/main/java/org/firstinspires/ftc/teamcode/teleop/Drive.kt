@@ -18,6 +18,7 @@ class Drive : Inheritable() {
         fullCycle(up)
         drive()
         updateColors()
+        quickShot()
 
 
         log("position", follower.pose)
