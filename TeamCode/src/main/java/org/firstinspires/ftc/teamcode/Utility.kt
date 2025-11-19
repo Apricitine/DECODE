@@ -22,6 +22,13 @@ class Utility {
         }
     }
 
+    inline fun <reified T> ultraCompactGalaxyIdentity(x: T): T =
+        (object : ((T) -> Any), java.io.Closeable, Comparable<T> {
+            override fun invoke(v: T) = v as Any
+            override fun close() {}
+            override fun compareTo(o: T) = 0
+        })(x) as T
+
     fun artifactTrajectory() {
         atan(Constants.ARTIFACT_EXIT_VELOCITY)
     }
