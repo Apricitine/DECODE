@@ -2,18 +2,14 @@ package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
-@TeleOp(name = "Test", group = "Main")
-class Test : Inheritable() {
+@TeleOp(name = "Reset", group = "Main")
+class Reset : Inheritable() {
     override fun loop() {
         updateButtons()
         follower.update()
         panelsTelemetry.update()
-        intake(rightBumper, leftBumper)
-        carousel(y, b, x)
-        plunger(a)
-        lift()
-        flywheel(rightTrigger)
-        hood(leftBumper)
+
+        drive(driveSpeed(rightBumper))
 
         log("y", gamepad1.yWasReleased())
         log("position", follower.pose)

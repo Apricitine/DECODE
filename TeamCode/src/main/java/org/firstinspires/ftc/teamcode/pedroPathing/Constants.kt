@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing
 
+import com.pedropathing.control.FilteredPIDFCoefficients
 import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.ftc.FollowerBuilder
@@ -10,11 +11,29 @@ import com.pedropathing.paths.PathConstraints
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.PIDFCoefficients
 
 class Constants {
     companion object {
-        private var followerConstants: FollowerConstants = FollowerConstants().mass(13.51)
-        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
+        private var followerConstants: FollowerConstants =
+            FollowerConstants().mass(13.51).forwardZeroPowerAcceleration(-30.24)
+                .lateralZeroPowerAcceleration(-61.8)
+                .translationalPIDFCoefficients(
+                    com.pedropathing.control.PIDFCoefficients(
+                        0.05,
+                        0.0,
+                        0.00625,
+                        0.0
+                    )
+                ).headingPIDFCoefficients(
+                    com.pedropathing.control.PIDFCoefficients(
+                        0.8,
+                        0.0,
+                        0.0,
+                        0.01
+                    )
+                )
+        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 4.0, 1.0)
         private var mecanumConstants: MecanumConstants =
             MecanumConstants()
                 .maxPower(1.0)
@@ -26,6 +45,8 @@ class Constants {
                 .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                 .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+                .xVelocity(68.550)
+                .yVelocity(58.273)
         private var localizerConstants: ThreeWheelIMUConstants =
             ThreeWheelIMUConstants()
                 /* these need to be determined */
@@ -38,8 +59,7 @@ class Constants {
                 .strafePodX(-4.25)
                 .leftEncoder_HardwareMapName("leftFront")
                 .rightEncoder_HardwareMapName("rightFront")
-                .strafeEncoder_HardwareMapName("rightLift")
-                /* these need to be determined */
+                .strafeEncoder_HardwareMapName("rightRear")
                 .leftEncoderDirection(Encoder.FORWARD)
                 .rightEncoderDirection(Encoder.FORWARD)
                 .strafeEncoderDirection(Encoder.FORWARD)

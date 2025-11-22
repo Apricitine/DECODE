@@ -107,17 +107,11 @@ abstract class Inheritable : Subsystems() {
         var startingPose: Pose? = null
     }
 
-    fun drive() {
-        if (!slowMode) follower!!.setTeleOpDrive(
-            -gamepad1.left_stick_y.toDouble(),
-            -gamepad1.left_stick_x.toDouble(),
-            -gamepad1.right_stick_x.toDouble(),
-            true
-        )
-        else follower!!.setTeleOpDrive(
-            -gamepad1.left_stick_y * slowModeMultiplier,
-            -gamepad1.left_stick_x * slowModeMultiplier,
-            -gamepad1.right_stick_x * slowModeMultiplier,
+    fun drive(power: Double) {
+        follower.setTeleOpDrive(
+            -gamepad1.left_stick_y * power,
+            -gamepad1.left_stick_x * power,
+            -gamepad1.right_stick_x * power,
             true
         )
     }
@@ -179,6 +173,14 @@ abstract class Inheritable : Subsystems() {
     fun plunger(button: Button) {
         if (button.`is`(Button.States.TAP)) {
             plungerMotion()
+        }
+    }
+
+    fun driveSpeed(button: Button): Double {
+        return if (button.`is`(Button.States.TAP)) {
+            0.25
+        } else {
+            1.0
         }
     }
 

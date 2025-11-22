@@ -16,9 +16,9 @@ class Drive : Inheritable() {
         flywheel(rightTrigger)
         hood(leftTrigger)
         fullCycle(up)
-        drive()
-        updateColors()
-        quickShot(left, right)
+        drive(1.0)
+//        updateColors()
+//        quickShot(left, right)
 
 
         log("position", follower.pose)
