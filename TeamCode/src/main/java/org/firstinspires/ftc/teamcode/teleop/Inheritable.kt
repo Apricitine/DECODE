@@ -203,10 +203,14 @@ abstract class Inheritable : Subsystems() {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
                 sleep(300)
                 plungerMotion()
+                sleep(300)
+                carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                 sleep(300)
                 plungerMotion()
+                sleep(300)
+                carousel.position = Utility.Constants.BASE
             }
         }
         if (purpleButton.`is`(Button.States.TAP)) {
@@ -219,10 +223,14 @@ abstract class Inheritable : Subsystems() {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
                 sleep(300)
                 plungerMotion()
+                sleep(300)
+                carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                 sleep(300)
                 plungerMotion()
+                sleep(300)
+                carousel.position = Utility.Constants.BASE
             }
         }
     }

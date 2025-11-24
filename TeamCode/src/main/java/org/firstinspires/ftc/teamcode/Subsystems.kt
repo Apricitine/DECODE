@@ -86,14 +86,31 @@ abstract class Subsystems : OpMode() {
     }
 
     fun identifyColor(sensor: NormalizedColorSensor): COLORS {
-        log("average", ((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3))
-        if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) < 0.004) {
-            log("color found")
-            return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
-            else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
-            else COLORS.NONE
-        } else {
-            return COLORS.NONE
+        log("average", sensor, ((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3))
+        when (sensor) {
+            // right thresholding
+            rightSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) < 0.004) {
+                log("color found")
+                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
+                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
+                else COLORS.NONE
+            } else return COLORS.NONE
+
+            // left thresholding
+            leftSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) > 0.0016) {
+                log("color found")
+                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
+                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
+                else COLORS.NONE
+            } else return COLORS.NONE
+
+            // front thresholding
+            else -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) > 0.002) {
+                log("color found")
+                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
+                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
+                else COLORS.NONE
+            } else return COLORS.NONE
         }
     }
 
