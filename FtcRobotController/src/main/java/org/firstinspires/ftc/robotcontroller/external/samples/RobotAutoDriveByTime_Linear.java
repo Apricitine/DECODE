@@ -59,8 +59,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor         leftFront   = null;
-    private DcMotor         rightFront  = null;
+    private DcMotor         leftDrive   = null;
+    private DcMotor         rightDrive  = null;
 
     private ElapsedTime     runtime = new ElapsedTime();
 

@@ -194,6 +194,7 @@ abstract class Inheritable : Subsystems() {
 
     fun quickShot(greenButton: Button, purpleButton: Button) {
         if (greenButton.`is`(Button.States.TAP)) {
+            updateColors()
             if (frontColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.BASE
                 sleep(300)
@@ -209,6 +210,7 @@ abstract class Inheritable : Subsystems() {
             }
         }
         if (purpleButton.`is`(Button.States.TAP)) {
+            updateColors()
             if (frontColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.BASE
                 sleep(300)

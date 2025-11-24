@@ -56,7 +56,7 @@ class EasyAuto : LinearOpMode() {
         leftFront.direction = DcMotorSimple.Direction.REVERSE
         leftRear.direction = DcMotorSimple.Direction.REVERSE
 
-        telemetry.addData("Status", "Ready to run") //
+        telemetry.addData("Status", "Ready to run")
         telemetry.update()
 
         waitForStart()
@@ -68,7 +68,7 @@ class EasyAuto : LinearOpMode() {
         rightRear.power = FORWARD_SPEED
 
         runtime.reset()
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds())
             telemetry.update()
         }
@@ -84,6 +84,6 @@ class EasyAuto : LinearOpMode() {
     }
 
     companion object {
-        const val FORWARD_SPEED: Double = 0.6
+        const val FORWARD_SPEED: Double = 0.5
     }
 }

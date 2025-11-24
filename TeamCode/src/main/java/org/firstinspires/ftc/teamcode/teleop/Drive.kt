@@ -17,13 +17,16 @@ class Drive : Inheritable() {
         hood(leftTrigger)
         fullCycle(up)
         drive(1.0)
-//        updateColors()
-//        quickShot(left, right)
+        quickShot(left, right)
 
 
         log("position", follower.pose)
         log("velocity", follower.velocity)
         log("carousel angle", carousel.position)
         log("plunger angle", plunger.position)
+
+        log("front color:", frontColor)
+        log("left color:", leftColor)
+        log("right color:", rightColor)
     }
 }
