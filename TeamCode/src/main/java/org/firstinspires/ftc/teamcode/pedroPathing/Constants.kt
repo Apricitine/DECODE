@@ -6,7 +6,9 @@ import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.ftc.FollowerBuilder
 import com.pedropathing.ftc.drivetrains.MecanumConstants
 import com.pedropathing.ftc.localization.Encoder
+import com.pedropathing.ftc.localization.constants.ThreeWheelConstants
 import com.pedropathing.ftc.localization.constants.ThreeWheelIMUConstants
+import com.pedropathing.ftc.localization.constants.TwoWheelConstants
 import com.pedropathing.paths.PathConstraints
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -16,24 +18,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients
 class Constants {
     companion object {
         private var followerConstants: FollowerConstants =
-            FollowerConstants().mass(13.51).forwardZeroPowerAcceleration(-30.24)
-                .lateralZeroPowerAcceleration(-61.8)
-                .translationalPIDFCoefficients(
-                    com.pedropathing.control.PIDFCoefficients(
-                        0.05,
-                        0.0,
-                        0.00625,
-                        0.0
-                    )
-                ).headingPIDFCoefficients(
-                    com.pedropathing.control.PIDFCoefficients(
-                        0.8,
-                        0.0,
-                        0.0,
-                        0.01
-                    )
-                )
-        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 4.0, 1.0)
+            FollowerConstants().mass(13.51)
+        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
         private var mecanumConstants: MecanumConstants =
             MecanumConstants()
                 .maxPower(1.0)
@@ -45,25 +31,17 @@ class Constants {
                 .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                 .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-                .xVelocity(68.550)
-                .yVelocity(58.273)
-        private var localizerConstants: ThreeWheelIMUConstants =
+        var localizerConstants: ThreeWheelIMUConstants =
             ThreeWheelIMUConstants()
-                /* these need to be determined */
-                .forwardTicksToInches(.001989436789)
-                .strafeTicksToInches(.001989436789)
-                .turnTicksToInches(.001989436789)
-                /* these are solid */
-                .leftPodY(3.125)
-                .rightPodY(-3.125)
-                .strafePodX(-4.25)
-                .leftEncoder_HardwareMapName("leftFront")
-                .rightEncoder_HardwareMapName("rightFront")
-                .strafeEncoder_HardwareMapName("rightRear")
+                .leftPodY(4.6875)
+                .rightPodY(-4.6875)
+                .strafePodX(-3.5)
+                .leftEncoder_HardwareMapName("flywheel")
+                .rightEncoder_HardwareMapName("rightRear")
+                .strafeEncoder_HardwareMapName("rightFront")
                 .leftEncoderDirection(Encoder.FORWARD)
                 .rightEncoderDirection(Encoder.FORWARD)
                 .strafeEncoderDirection(Encoder.FORWARD)
-                /* these are solid */
                 .IMU_HardwareMapName("imu")
                 .IMU_Orientation(
                     RevHubOrientationOnRobot(
@@ -71,7 +49,6 @@ class Constants {
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
                 )
-
         @JvmStatic
         fun createFollower(hardwareMap: HardwareMap?): Follower {
             return FollowerBuilder(followerConstants, hardwareMap)

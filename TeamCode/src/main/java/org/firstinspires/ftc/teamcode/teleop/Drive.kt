@@ -19,7 +19,6 @@ class Drive : Inheritable() {
         drive(1.0)
         quickShot(left, right)
 
-
         log("position", follower.pose)
         log("velocity", follower.velocity)
         log("carousel angle", carousel.position)
