@@ -14,12 +14,43 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
+import java.util.logging.Filter
 
 class Constants {
     companion object {
         private var followerConstants: FollowerConstants =
-            FollowerConstants().mass(13.51)
-        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
+            FollowerConstants()
+                .mass(13.51)
+                .forwardZeroPowerAcceleration(-26.27)
+                .lateralZeroPowerAcceleration(-65.62)
+                .translationalPIDFCoefficients(
+                    com
+                        .pedropathing
+                        .control
+                        .PIDFCoefficients(0.1, 0.0, 0.0, 0.0)
+                )
+                .headingPIDFCoefficients(
+                    com
+                        .pedropathing
+                        .control
+                        .PIDFCoefficients(1.0, 0.0, 0.0, 0.01)
+                )
+                .drivePIDFCoefficients(
+                    FilteredPIDFCoefficients(
+                        0.025,
+                        0.0,
+                        0.00001,
+                        0.6,
+                        0.01
+                    )
+                )
+                .centripetalScaling(0.0005)
+        private var pathConstraints: PathConstraints = PathConstraints(
+            0.99,
+            100.0,
+            2.0,
+            1.0
+        )
         private var mecanumConstants: MecanumConstants =
             MecanumConstants()
                 .maxPower(1.0)
@@ -31,8 +62,13 @@ class Constants {
                 .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
                 .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
                 .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+                .xVelocity(69.60)
+                .yVelocity(58.31)
         var localizerConstants: ThreeWheelIMUConstants =
             ThreeWheelIMUConstants()
+                .forwardTicksToInches(.001989436789)
+                .strafeTicksToInches(.001989436789)
+                .turnTicksToInches(.001989436789)
                 .leftPodY(4.6875)
                 .rightPodY(-4.6875)
                 .strafePodX(-3.5)
