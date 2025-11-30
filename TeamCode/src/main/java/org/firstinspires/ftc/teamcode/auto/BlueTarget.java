@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous; // make sure this aligns with class location
+package org.firstinspires.ftc.teamcode.auto; // make sure this aligns with class location
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;

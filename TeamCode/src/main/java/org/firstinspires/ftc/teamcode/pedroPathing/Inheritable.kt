@@ -6,14 +6,19 @@ import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
-import org.openftc.apriltag.AprilTagDetection
 
 @Autonomous(name = "idek", group = "Test")
 class Inheritable : Subsystems() {
-    lateinit var tag: AprilTagDetection
     lateinit var currentPose: Pose
-
     val runtime = ElapsedTime()
+
+    enum class ObeliskStates {
+        NONE,
+        GPP,
+        PGP,
+        PPG
+    }
+    private var obeliskState: ObeliskStates = ObeliskStates.NONE
 
     object PathChains : PathChain() {
         lateinit var scorePreload: PathChain
