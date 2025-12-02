@@ -38,7 +38,7 @@ class Constants {
                 .strafePodX(-4.25)
                 .leftEncoder_HardwareMapName("leftFront")
                 .rightEncoder_HardwareMapName("rightFront")
-                .strafeEncoder_HardwareMapName("rightLift")
+                .strafeEncoder_HardwareMapName("rightRear")
                 /* these need to be determined */
                 .leftEncoderDirection(Encoder.FORWARD)
                 .rightEncoderDirection(Encoder.FORWARD)
