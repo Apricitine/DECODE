@@ -9,9 +9,9 @@ class Test : Inheritable() {
         follower.update()
         panelsTelemetry.update()
 
-        updateColors()
-        quickShot(left, right)
+        obeliskTag()
 
+        log("")
         log("front color:", frontColor)
         log("left color:", leftColor)
         log("right color:", rightColor)

@@ -40,8 +40,8 @@ class Constants {
                 .rightEncoder_HardwareMapName("rightFront")
                 .strafeEncoder_HardwareMapName("rightRear")
                 /* these need to be determined */
-                .leftEncoderDirection(Encoder.FORWARD)
-                .rightEncoderDirection(Encoder.FORWARD)
+                .leftEncoderDirection(Encoder.REVERSE)
+                .rightEncoderDirection(Encoder.REVERSE)
                 .strafeEncoderDirection(Encoder.FORWARD)
                 /* these are solid */
                 .IMU_HardwareMapName("imu")

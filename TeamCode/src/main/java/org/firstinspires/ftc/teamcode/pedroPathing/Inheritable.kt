@@ -12,13 +12,7 @@ class Inheritable : Subsystems() {
     lateinit var currentPose: Pose
     val runtime = ElapsedTime()
 
-    enum class ObeliskStates {
-        NONE,
-        GPP,
-        PGP,
-        PPG
-    }
-    private var obeliskState: ObeliskStates = ObeliskStates.NONE
+
 
     object PathChains : PathChain() {
         lateinit var scorePreload: PathChain

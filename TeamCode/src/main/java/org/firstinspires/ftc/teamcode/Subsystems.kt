@@ -21,6 +21,14 @@ abstract class Subsystems : OpMode() {
         NONE, PURPLE, GREEN
     }
 
+    enum class ObeliskStates {
+        NONE,
+        GPP,
+        PGP,
+        PPG
+    }
+    private var obeliskState: ObeliskStates = ObeliskStates.NONE
+
     lateinit var leftIntake: CRServo
     lateinit var rightIntake: CRServo
     lateinit var carousel: Servo
@@ -118,5 +126,19 @@ abstract class Subsystems : OpMode() {
         frontColor = identifyColor(frontSensor)
         rightColor = identifyColor(rightSensor)
         leftColor = identifyColor(leftSensor)
+    }
+
+    fun obeliskTag() {
+        val detections = processor.detections
+        log("tags detected", detections.size)
+
+        for (detection in detections) {
+            if (detection.metadata != null) {
+                if (detection.id == 21) obeliskState = ObeliskStates.GPP
+                if (detection.id == 22) obeliskState = ObeliskStates.PGP
+                if (detection.id == 23) obeliskState = ObeliskStates.PPG
+                log("tag", obeliskState)
+            }
+        }
     }
 }
