@@ -78,7 +78,7 @@ abstract class Inheritable : Subsystems() {
     fun drive(power: Double) {
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y * power,
-            -gamepad1.left_stick_x * power,
+            gamepad1.left_stick_x * power,
             -gamepad1.right_stick_x * power,
             true
         )
