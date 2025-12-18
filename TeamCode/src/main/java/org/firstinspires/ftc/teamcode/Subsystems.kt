@@ -67,6 +67,7 @@ abstract class Subsystems : OpMode() {
         leftSensor = hardwareMap.get(NormalizedColorSensor::class.java, "leftSensor")
 
         panelsTelemetry = PanelsTelemetry.telemetry
+
     }
 
     fun initializeProcessor() {
@@ -105,7 +106,7 @@ abstract class Subsystems : OpMode() {
             } else return COLORS.NONE
 
             // left thresholding
-            leftSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) > 0.0016) {
+            leftSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3).toDouble() != 0.0012) {
                 log("color found")
                 return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
                 else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE

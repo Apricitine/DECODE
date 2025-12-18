@@ -78,7 +78,7 @@ abstract class Inheritable : Subsystems() {
     fun drive(power: Double) {
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y * power,
-            gamepad1.left_stick_x * power,
+            -gamepad1.left_stick_x * power,
             -gamepad1.right_stick_x * power,
             true
         )
@@ -165,19 +165,19 @@ abstract class Inheritable : Subsystems() {
             updateColors()
             if (frontColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.BASE
-                sleep(300)
-                plungerMotion()
+//                sleep(300)
+//                plungerMotion()
             } else if (rightColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
+//                sleep(300)
+//                plungerMotion()
+//                sleep(300)
                 carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
+//                sleep(300)
+//                plungerMotion()
+//                sleep(300)
                 carousel.position = Utility.Constants.BASE
             }
         }
@@ -185,19 +185,19 @@ abstract class Inheritable : Subsystems() {
             updateColors()
             if (frontColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.BASE
-                sleep(300)
-                plungerMotion()
+//                sleep(300)
+//                plungerMotion()
             } else if (rightColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
+//                sleep(300)
+//                plungerMotion()
+//                sleep(300)
                 carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
+//                sleep(300)
+//                plungerMotion()
+//                sleep(300)
                 carousel.position = Utility.Constants.BASE
             }
         }

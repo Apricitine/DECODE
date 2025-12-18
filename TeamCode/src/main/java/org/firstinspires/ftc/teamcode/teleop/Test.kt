@@ -9,12 +9,15 @@ class Test : Inheritable() {
         follower.update()
         panelsTelemetry.update()
 
-        obeliskTag()
+        quickShot(left, right)
 
-        log("")
+        log("averaged all left", ((leftSensor.normalizedColors.red + leftSensor.normalizedColors.green + leftSensor.normalizedColors.blue) / 3))
+        log("normalized left", ((leftSensor.normalizedColors.red + leftSensor.normalizedColors.green + leftSensor.normalizedColors.blue)))
+
         log("front color:", frontColor)
         log("left color:", leftColor)
         log("right color:", rightColor)
+
 
     }
 }
