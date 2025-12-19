@@ -17,17 +17,8 @@ import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 
 abstract class Subsystems : OpMode() {
-    enum class COLORS {
-        NONE, PURPLE, GREEN
-    }
 
-    enum class ObeliskStates {
-        NONE,
-        GPP,
-        PGP,
-        PPG
-    }
-    private var obeliskState: ObeliskStates = ObeliskStates.NONE
+    protected var obeliskState: ObeliskStates = ObeliskStates.NONE
 
     lateinit var leftIntake: CRServo
     lateinit var rightIntake: CRServo
@@ -36,7 +27,7 @@ abstract class Subsystems : OpMode() {
     lateinit var hood: Servo
     lateinit var leftLift: DcMotorEx
     lateinit var rightLift: DcMotorEx
-    lateinit var flywheel: DcMotorEx
+    protected lateinit var flywheel: DcMotorEx
 
     lateinit var panelsTelemetry: TelemetryManager
     lateinit var processor: AprilTagProcessor
@@ -50,6 +41,23 @@ abstract class Subsystems : OpMode() {
     var frontColor = COLORS.NONE
     var rightColor = COLORS.NONE
     var leftColor = COLORS.NONE
+
+    enum class COLORS {
+        NONE, PURPLE, GREEN
+    }
+
+    enum class ObeliskStates {
+        NONE,
+        GPP,
+        PGP,
+        PPG
+    }
+
+    enum class CarouselStates {
+        FRONT,
+        RIGHT,
+        LEFT
+    }
 
     fun initializeSubsystems() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -70,6 +78,10 @@ abstract class Subsystems : OpMode() {
 
     }
 
+    /**
+     * Initializes the AprilTag vision portal.
+     * @see obeliskTag
+     */
     fun initializeProcessor() {
         processor = AprilTagProcessor.Builder().build()
         val builder = VisionPortal.Builder()
@@ -95,7 +107,11 @@ abstract class Subsystems : OpMode() {
     }
 
     fun identifyColor(sensor: NormalizedColorSensor): COLORS {
-        log("average", sensor, ((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3))
+        log(
+            "average",
+            sensor,
+            ((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3)
+        )
         when (sensor) {
             // right thresholding
             rightSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) < 0.004) {
@@ -129,6 +145,12 @@ abstract class Subsystems : OpMode() {
         leftColor = identifyColor(leftSensor)
     }
 
+    /**
+     * This functions runs an AprilTag detection using the camera and looks
+     * for the motif on the obelisk. If it finds one, it will set obeliskState
+     * to the corresponding motif.
+     * @see initializeProcessor
+     */
     fun obeliskTag() {
         val detections = processor.detections
         log("tags detected", detections.size)

@@ -10,12 +10,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFol
 import org.firstinspires.ftc.teamcode.util.Button
 import java.lang.Thread.sleep
 
-enum class CarouselStates {
-    ONE,
-    TWO,
-    THREE
-}
-
 enum class LiftStages {
     ZERO,
     ONE,
@@ -27,10 +21,11 @@ enum class LiftStages {
 @Configurable
 @TeleOp
 abstract class Inheritable : Subsystems() {
-    protected var carouselState: CarouselStates = CarouselStates.ONE
+    protected var carouselState: CarouselStates = CarouselStates.FRONT
     private var intakeRunning: Boolean = false
     private var intakeReverseRunning: Boolean = false
-    private var flywheelRunning: Boolean = false
+    private var flywheelSlowRunning: Boolean = false
+    private var flywheelFastRunning: Boolean = false
     private var hoodUp: Boolean = false
 
     private var plungerBusy: Boolean = false
@@ -61,13 +56,14 @@ abstract class Inheritable : Subsystems() {
     override fun start() {
         follower.startTeleopDrive(true)
         carousel.position = Utility.Constants.BASE
-        carouselState = CarouselStates.ONE
+        carouselState = CarouselStates.FRONT
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
         leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         hood.position = 1.0
         hood.direction = Servo.Direction.REVERSE
+        hood.position = 0.07
 
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -125,15 +121,15 @@ abstract class Inheritable : Subsystems() {
         if (!plungerBusy) {
             if (front.`is`(Button.States.TAP)) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                carouselState = CarouselStates.THREE
+                carouselState = CarouselStates.LEFT
             }
             if (right.`is`(Button.States.TAP)) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                carouselState = CarouselStates.TWO
+                carouselState = CarouselStates.RIGHT
             }
             if (left.`is`(Button.States.TAP)) {
                 carousel.position = 0.02
-                carouselState = CarouselStates.ONE
+                carouselState = CarouselStates.FRONT
             }
         }
     }
@@ -160,7 +156,7 @@ abstract class Inheritable : Subsystems() {
         plungerBusy = false
     }
 
-    fun quickShot(greenButton: Button, purpleButton: Button) {
+    fun colorShot(greenButton: Button, purpleButton: Button) {
         if (greenButton.`is`(Button.States.TAP)) {
             updateColors()
             if (frontColor == COLORS.GREEN) {
@@ -244,28 +240,36 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun flywheel(button: Button) {
-        if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
+    fun flywheel(buttonSlow: Button, buttonFast: Button) {
+        if (buttonSlow.`is`(Button.States.TAP)) {
+            flywheelSlowRunning = !flywheelSlowRunning
+            if (flywheelFastRunning) flywheelFastRunning = false
+        }
+        if (buttonFast.`is`(Button.States.TAP)) {
+            flywheelFastRunning = !flywheelFastRunning
+            if (flywheelSlowRunning) flywheelSlowRunning = false
+        }
 
-        if (flywheelRunning) flywheel.power = -0.65
+        if (flywheelSlowRunning) flywheel.power = -0.65
+        else if (flywheelFastRunning) flywheel.power = -1.0
         else flywheel.power = 0.0
     }
 
-    fun fullCycle(button: Button) {
+    fun quickShot(button: Button) {
         if (button.`is`(Button.States.TAP)) {
-            flywheelRunning = true
+            flywheelSlowRunning = true
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-            sleep(200)
+            sleep(300)
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-            sleep(200)
+            sleep(300)
             plungerMotion()
             sleep(300)
             carousel.position = 0.02
-            flywheelRunning = false
+            flywheelSlowRunning = false
         }
     }
 
