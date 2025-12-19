@@ -27,13 +27,6 @@ class CenterBlue : InheritableAuto() {
 
     override fun loop() {
         follower.setStartingPose(Poses.start)
-
-        pathUpdate()
-
-        log("path state", pathState)
-        log("x", follower.pose.x)
-        log("y", follower.pose.y)
-        log("heading", follower.pose.heading)
     }
 
     override fun buildPathChains() {

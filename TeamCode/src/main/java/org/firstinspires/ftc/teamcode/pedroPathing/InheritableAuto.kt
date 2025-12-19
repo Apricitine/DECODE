@@ -43,6 +43,13 @@ abstract class InheritableAuto : Subsystems() {
         follower.update()
         panelsTelemetry.update()
         currentPose = follower.pose
+
+        pathUpdate()
+
+        log("path state", pathState)
+        log("x", follower.pose.x)
+        log("y", follower.pose.y)
+        log("heading", follower.pose.heading)
     }
 
     /**
