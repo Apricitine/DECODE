@@ -9,7 +9,7 @@ class Test : Inheritable() {
         follower.update()
         panelsTelemetry.update()
 
-        quickShot(left, right)
+        quickShot(up)
 
         log("averaged all left", ((leftSensor.normalizedColors.red + leftSensor.normalizedColors.green + leftSensor.normalizedColors.blue) / 3))
         log("normalized left", ((leftSensor.normalizedColors.red + leftSensor.normalizedColors.green + leftSensor.normalizedColors.blue)))

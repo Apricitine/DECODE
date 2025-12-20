@@ -3,18 +3,21 @@ package org.firstinspires.ftc.teamcode.auto
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
+import java.lang.Thread.sleep
 
-
+@Autonomous(name = "Center Blue", group = "main")
 class CenterBlue : InheritableAuto() {
     val subsystems = Subsystems()
 
     object Poses {
         val start = Pose(18.3, 125.6, Math.toRadians(315.0))
         val camera = Pose(34.2, 109.4, Math.toRadians(45.0))
+        val firstShootPosition = Pose(48.0, 96.0, Math.toRadians(125.0))
         val shootPosition = Pose(48.0, 96.0, Math.toRadians(135.0))
         val firstStrike = Pose(41.64, 85.51, Math.toRadians(180.0))
-        val getFirstStrike = Pose(21.70, 85.51, Math.toRadians(180.0))
+        val getFirstStrike = Pose(18.0, 85.51, Math.toRadians(180.0))
     }
 
     object PathChains : PathChain() {
@@ -26,17 +29,29 @@ class CenterBlue : InheritableAuto() {
     }
 
     override fun loop() {
+        follower.update()
         follower.setStartingPose(Poses.start)
+        panelsTelemetry.update()
+        currentPose = follower.pose
+
+        pathUpdate()
+
+        log("path state", pathState)
+        log("x", follower.pose.x)
+        log("y", follower.pose.y)
+        log("heading", follower.pose.heading)
     }
 
     override fun buildPathChains() {
         PathChains.getTag = linearPathChain(Poses.start, Poses.camera)
         PathChains.shootBalls =
-            linearPathChain(Poses.camera, Poses.shootPosition, Poses.camera, Poses.firstStrike)
+            linearPathChain(Poses.camera, Poses.firstShootPosition)
         PathChains.positionToGetFirstStrike =
             linearPathChain(Poses.shootPosition, Poses.firstStrike)
         PathChains.intakeFirstStrike =
-            follower.pathBuilder().addPath(BezierLine(Poses.firstStrike, Poses.getFirstStrike))
+            follower.pathBuilder()
+                .addPath(BezierLine(Poses.firstStrike, Poses.getFirstStrike))
+                .setBrakingStrength(0.25)
                 .build()
         PathChains.shootStrikes = linearPathChain(Poses.getFirstStrike, Poses.shootPosition)
     }
@@ -45,60 +60,65 @@ class CenterBlue : InheritableAuto() {
         when (pathState) {
             0 -> {
                 follower.followPath(PathChains.getTag)
-                pathState = -1
+                pathState = 1
                 pathTimer.resetTimer()
             }
+
             1 -> busy {
                 obeliskTag()
-                if (pathTimer.elapsedTimeSeconds > 5) {
+                if (pathTimer.elapsedTimeSeconds > 2) {
                     follower.followPath(PathChains.shootBalls, true)
                     pathState = 2
                     pathTimer.resetTimer()
                 }
             }
+
             2 -> busy {
                 subsystems.flywheel(0.65)
                 when (obeliskState) {
                     ObeliskStates.GPP -> {
-                        subsystems.shoot(CarouselStates.FRONT)
+                        subsystems.shoot(CarouselStates.FRONT, startup = true)
                         subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.LEFT, false)
+                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     ObeliskStates.PGP -> {
-                        subsystems.shoot(CarouselStates.RIGHT)
+                        subsystems.shoot(CarouselStates.RIGHT, startup = true)
                         subsystems.shoot(CarouselStates.FRONT)
-                        subsystems.shoot(CarouselStates.LEFT, false)
+                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     ObeliskStates.PPG -> {
-                        subsystems.shoot(CarouselStates.LEFT)
+                        subsystems.shoot(CarouselStates.LEFT, startup = true)
                         subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.FRONT, false)
+                        subsystems.shoot(CarouselStates.FRONT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     else -> {}
                 }
-                if (pathTimer.elapsedTimeSeconds > 5) {
-                    follower.followPath(PathChains.positionToGetFirstStrike)
+                if (pathTimer.elapsedTimeSeconds > 4) {
+                    follower.followPath(PathChains.positionToGetFirstStrike, true)
                     pathState = 3
                     pathTimer.resetTimer()
                 }
             }
+
             3 -> busy {
                 follower.followPath(PathChains.positionToGetFirstStrike, true)
                 pathState = 4
                 pathTimer.resetTimer()
             }
+
             4 -> busy {
                 subsystems.intake(1.0)
                 follower.followPath(PathChains.intakeFirstStrike, true)
                 pathState = 5
                 pathTimer.resetTimer()
             }
+
             5 -> busy {
                 subsystems.intake(1.0)
                 subsystems.flywheel(0.65)
@@ -106,46 +126,50 @@ class CenterBlue : InheritableAuto() {
                 pathState = 6
                 pathTimer.resetTimer()
             }
+
             6 -> busy {
                 subsystems.flywheel(0.65)
                 when (obeliskState) {
                     ObeliskStates.GPP -> {
-                        subsystems.shoot(CarouselStates.FRONT)
+                        subsystems.shoot(CarouselStates.FRONT, startup = true)
                         subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.LEFT, false)
+                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     ObeliskStates.PGP -> {
-                        subsystems.shoot(CarouselStates.RIGHT)
+                        subsystems.shoot(CarouselStates.RIGHT, startup = true)
                         subsystems.shoot(CarouselStates.FRONT)
-                        subsystems.shoot(CarouselStates.LEFT, false)
+                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     ObeliskStates.PPG -> {
-                        subsystems.shoot(CarouselStates.LEFT)
+                        subsystems.shoot(CarouselStates.LEFT, startup = true)
                         subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.FRONT, false)
+                        subsystems.shoot(CarouselStates.FRONT, cooldown = false)
                         subsystems.flywheel(0.0)
                     }
 
                     else -> {}
                 }
-                if (pathTimer.elapsedTimeSeconds > 5) {
+                if (pathTimer.elapsedTimeSeconds > 4) {
                     pathState = -1
                     pathTimer.resetTimer()
                 }
             }
+
             7 -> busy {
                 follower.followPath(PathChains.shootBalls, true)
                 pathState = 8
                 pathTimer.resetTimer()
             }
+
             8 -> busy {
                 pathState = -1
                 pathTimer.resetTimer()
             }
+
             else -> {}
         }
     }

@@ -6,6 +6,9 @@ import com.pedropathing.paths.Path
 import com.pedropathing.paths.PathChain
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
@@ -31,25 +34,19 @@ abstract class InheritableAuto : Subsystems() {
         pathTimer = Timer()
         opModeTimer = Timer()
         opModeTimer.resetTimer()
+        pathState = 0
+        pathTimer.resetTimer()
+
+        carousel.position = Utility.Constants.BASE
+        plunger.direction = Servo.Direction.REVERSE
+        plunger.position = 0.02
+        hood.position = 1.0
+        hood.direction = Servo.Direction.REVERSE
+        hood.position = 0.07
     }
 
     override fun start() {
-        opModeTimer.resetTimer()
-        pathState = 0
-        pathTimer.resetTimer()
-    }
 
-    override fun loop() {
-        follower.update()
-        panelsTelemetry.update()
-        currentPose = follower.pose
-
-        pathUpdate()
-
-        log("path state", pathState)
-        log("x", follower.pose.x)
-        log("y", follower.pose.y)
-        log("heading", follower.pose.heading)
     }
 
     /**
@@ -65,13 +62,14 @@ abstract class InheritableAuto : Subsystems() {
      * not set.
      * @return A PathChain with the specified Poses integrated.
      */
-    fun linearPathChain(startPose: Pose, endPose: Pose, interpolationStartPose: Pose? = null, interpolationEndPose: Pose? = null): PathChain {
+    fun linearPathChain(startPose: Pose, endPose: Pose, interpolationStartPose: Pose? = null, interpolationEndPose: Pose? = null, brakingStrength: Double = 1.0): PathChain {
         return follower.pathBuilder()
             .addPath(BezierLine(startPose, endPose))
             .setLinearHeadingInterpolation(
                 interpolationStartPose?.heading ?: startPose.heading,
                 interpolationEndPose?.heading ?: endPose.heading
             )
+            .setBrakingStrength(brakingStrength)
             .build()
     }
 
@@ -80,7 +78,7 @@ abstract class InheritableAuto : Subsystems() {
 
     inner class Subsystems {
         fun flywheel(power: Double) {
-            flywheel.power = power
+            flywheel.power = -power
         }
 
         /**
@@ -89,13 +87,14 @@ abstract class InheritableAuto : Subsystems() {
          * @param cooldown Optional. Defaults to true. Specifies whether
          * to add a 300ms cooldown after the plunger motion.
          */
-        fun shoot(slot: CarouselStates, cooldown: Boolean = true) {
+        fun shoot(slot: CarouselStates, cooldown: Boolean = true, startup: Boolean = false) {
+            if (startup) sleep(2000)
             when (slot) {
-                CarouselStates.FRONT -> carousel.position = Utility.Constants.BASE
+                CarouselStates.FRONT -> carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                 CarouselStates.RIGHT -> carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                CarouselStates.LEFT -> carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                CarouselStates.LEFT -> carousel.position = Utility.Constants.BASE
             }
-            sleep(300)
+            sleep(500)
             plunger()
             if (cooldown) sleep(300)
         }
@@ -107,6 +106,7 @@ abstract class InheritableAuto : Subsystems() {
         }
 
         fun intake(power: Double) {
+            carousel.position = Utility.Constants.BASE
             leftIntake.power = -power
             rightIntake.power = power
         }
