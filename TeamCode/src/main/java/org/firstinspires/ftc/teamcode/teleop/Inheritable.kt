@@ -51,6 +51,10 @@ abstract class Inheritable : Subsystems() {
         follower = createFollower(hardwareMap)
         follower.update()
         initializeProcessor()
+
+        rightBaseline = calibrate(rightSensor)
+        leftBaseline  = calibrate(leftSensor)
+        frontBaseline = calibrate(frontSensor)
     }
 
     override fun start() {

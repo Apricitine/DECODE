@@ -42,22 +42,23 @@ abstract class Subsystems : OpMode() {
     var rightColor = COLORS.NONE
     var leftColor = COLORS.NONE
 
+    lateinit var rightBaseline: Baseline
+    lateinit var leftBaseline: Baseline
+    lateinit var frontBaseline: Baseline
+
     enum class COLORS {
         NONE, PURPLE, GREEN
     }
 
     enum class ObeliskStates {
-        NONE,
-        GPP,
-        PGP,
-        PPG
+        NONE, GPP, PGP, PPG
     }
 
     enum class CarouselStates {
-        FRONT,
-        RIGHT,
-        LEFT
+        FRONT, RIGHT, LEFT
     }
+
+    data class Baseline(val sum: Float, val g: Float, val b: Float)
 
     fun initializeSubsystems() {
         leftIntake = hardwareMap.get(CRServo::class.java, "leftIntake")
@@ -106,37 +107,37 @@ abstract class Subsystems : OpMode() {
         }
     }
 
-    fun identifyColor(sensor: NormalizedColorSensor): COLORS {
-        log(
-            "average",
-            sensor,
-            ((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3)
-        )
-        when (sensor) {
-            // right thresholding
-            rightSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) < 0.004) {
-                log("color found")
-                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
-                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
-                else COLORS.NONE
-            } else return COLORS.NONE
-
-            // left thresholding
-            leftSensor -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3).toDouble() != 0.0012) {
-                log("color found")
-                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
-                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
-                else COLORS.NONE
-            } else return COLORS.NONE
-
-            // front thresholding
-            else -> if (((sensor.normalizedColors.red + sensor.normalizedColors.green + sensor.normalizedColors.blue) / 3) > 0.002) {
-                log("color found")
-                return if (sensor.normalizedColors.green / sensor.normalizedColors.red > sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.GREEN
-                else if (sensor.normalizedColors.green / sensor.normalizedColors.red < sensor.normalizedColors.blue / sensor.normalizedColors.red) COLORS.PURPLE
-                else COLORS.NONE
-            } else return COLORS.NONE
+    fun calibrate(sensor: NormalizedColorSensor) = (1..30).mapNotNull {
+        val colors = sensor.normalizedColors
+        val sum = colors.red + colors.green + colors.blue
+        if (sum > 0) Triple(sum, colors.green / sum, colors.blue / sum) else null
+    }.let { list ->
+        val n = list.size.coerceAtLeast(1)
+        val avg = list.fold(Triple(0f, 0f, 0f)) { acc, t ->
+            Triple(acc.first + t.first, acc.second + t.second, acc.third + t.third)
         }
+        Baseline(avg.first / n, avg.second / n, avg.third / n)
+    }
+
+    fun identifyColor(sensor: NormalizedColorSensor): COLORS {
+        val c = sensor.normalizedColors
+        val sum = c.red + c.green + c.blue
+        if (sum <= 0f) return COLORS.NONE
+
+        val g = c.green / sum
+        val b = c.blue / sum
+
+        val base = when (sensor) {
+            rightSensor -> rightBaseline
+            leftSensor -> leftBaseline
+            else -> frontBaseline
+        }
+
+        val brightnessChanged = kotlin.math.abs(sum - base.sum) > base.sum * 0.25f
+        val colorSeparated = kotlin.math.abs(g - b) > 0.08f
+
+        if (!brightnessChanged || !colorSeparated) return COLORS.NONE
+        return if (g > b) COLORS.GREEN else COLORS.PURPLE
     }
 
     fun updateColors() {
@@ -144,6 +145,7 @@ abstract class Subsystems : OpMode() {
         rightColor = identifyColor(rightSensor)
         leftColor = identifyColor(leftSensor)
     }
+
 
     /**
      * This functions runs an AprilTag detection using the camera and looks
