@@ -62,7 +62,13 @@ abstract class InheritableAuto : Subsystems() {
      * not set.
      * @return A PathChain with the specified Poses integrated.
      */
-    fun linearPathChain(startPose: Pose, endPose: Pose, interpolationStartPose: Pose? = null, interpolationEndPose: Pose? = null, brakingStrength: Double = 1.0): PathChain {
+    fun linearPathChain(
+        startPose: Pose,
+        endPose: Pose,
+        interpolationStartPose: Pose? = null,
+        interpolationEndPose: Pose? = null,
+        brakingStrength: Double = 1.0
+    ): PathChain {
         return follower.pathBuilder()
             .addPath(BezierLine(startPose, endPose))
             .setLinearHeadingInterpolation(
@@ -90,8 +96,12 @@ abstract class InheritableAuto : Subsystems() {
         fun shoot(slot: CarouselStates, cooldown: Boolean = true, startup: Boolean = false) {
             if (startup) sleep(2000)
             when (slot) {
-                CarouselStates.FRONT -> carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                CarouselStates.RIGHT -> carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                CarouselStates.FRONT -> carousel.position =
+                    Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+
+                CarouselStates.RIGHT -> carousel.position =
+                    Utility.Constants.SINGLE_ROTATION_CAROUSEL
+
                 CarouselStates.LEFT -> carousel.position = Utility.Constants.BASE
             }
             sleep(500)
@@ -109,6 +119,44 @@ abstract class InheritableAuto : Subsystems() {
             carousel.position = Utility.Constants.BASE
             leftIntake.power = -power
             rightIntake.power = power
+        }
+
+        fun motifShot() {
+            if (obeliskState == ObeliskStates.NONE) return
+
+            val purple = mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
+
+            obeliskState.name
+                .map { if (it == 'G') CarouselStates.FRONT else purple.removeAt(0) }
+                .forEachIndexed { index, slot ->
+                    shoot(
+                        slot,
+                        index != 2,
+                        index == 0
+                    )
+                }
+        }
+
+        fun colorMotifShot() {
+            updateColors()
+            if (obeliskState == ObeliskStates.NONE) return
+
+            val slots = mutableListOf(
+                CarouselStates.FRONT to frontColor,
+                CarouselStates.RIGHT to rightColor,
+                CarouselStates.LEFT to leftColor
+            )
+
+            obeliskState.name
+                .map { if (it == 'G') COLORS.GREEN else COLORS.PURPLE }
+                .mapNotNull { c ->
+                    slots.firstOrNull { it.second == c }?.also { slots.remove(it) }?.first
+                }
+                .also { list ->
+                    list.forEachIndexed { i, slot ->
+                        shoot(slot, i != list.lastIndex, i == 0)
+                    }
+                }
         }
     }
 

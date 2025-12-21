@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.geometry.BezierLine
+import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Servo
@@ -8,14 +11,11 @@ import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import java.lang.Thread.sleep
 
 enum class LiftStages {
-    ZERO,
-    ONE,
-    TWO,
-    THREE,
-    FOUR
+    ZERO, ONE, TWO, THREE, FOUR
 }
 
 @Configurable
@@ -271,6 +271,28 @@ abstract class Inheritable : Subsystems() {
             carousel.position = 0.02
             flywheelSlowRunning = false
         }
+    }
+
+    fun align(button: Button, distance: Double? = null) {
+        val tagPose: AprilTagPoseFtc = (processor.detections.firstOrNull {
+            it.metadata != null && it.id !in 21..23
+        } ?: return)
+            .ftcPose ?: return
+        val x = tagPose.x * 39.37
+        val y = tagPose.y * 37.37 - (distance ?: 0.0)
+
+        follower.followPath(
+            Path(
+                BezierLine(
+                    Pose(0.0, 0.0, 0.0),
+                    Pose(
+                        x,
+                        if (distance != null) y else tagPose.y * 39.37,
+                        Math.toRadians(tagPose.yaw.toDouble())
+                    )
+                )
+            )
+        )
     }
 
     fun updateButtons() {

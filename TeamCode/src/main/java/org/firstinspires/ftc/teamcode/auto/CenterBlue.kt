@@ -78,30 +78,8 @@ class CenterBlue : InheritableAuto() {
 
             2 -> busy {
                 subsystems.flywheel(0.65)
-                when (obeliskState) {
-                    ObeliskStates.GPP -> {
-                        subsystems.shoot(CarouselStates.FRONT, startup = true)
-                        subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    ObeliskStates.PGP -> {
-                        subsystems.shoot(CarouselStates.RIGHT, startup = true)
-                        subsystems.shoot(CarouselStates.FRONT)
-                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    ObeliskStates.PPG -> {
-                        subsystems.shoot(CarouselStates.LEFT, startup = true)
-                        subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.FRONT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    else -> {}
-                }
+                subsystems.motifShot()
+                subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 4) {
                     follower.followPath(PathChains.positionToGetFirstStrike, true)
                     pathState = 3
@@ -132,30 +110,8 @@ class CenterBlue : InheritableAuto() {
 
             6 -> busy {
                 subsystems.flywheel(0.65)
-                when (obeliskState) {
-                    ObeliskStates.GPP -> {
-                        subsystems.shoot(CarouselStates.FRONT, startup = true)
-                        subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    ObeliskStates.PGP -> {
-                        subsystems.shoot(CarouselStates.RIGHT, startup = true)
-                        subsystems.shoot(CarouselStates.FRONT)
-                        subsystems.shoot(CarouselStates.LEFT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    ObeliskStates.PPG -> {
-                        subsystems.shoot(CarouselStates.LEFT, startup = true)
-                        subsystems.shoot(CarouselStates.RIGHT)
-                        subsystems.shoot(CarouselStates.FRONT, cooldown = false)
-                        subsystems.flywheel(0.0)
-                    }
-
-                    else -> {}
-                }
+                subsystems.colorMotifShot()
+                subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 6) {
                     pathState = 7
                     pathTimer.resetTimer()
