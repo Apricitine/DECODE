@@ -5,20 +5,19 @@ import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
-import java.lang.Thread.sleep
 
-@Autonomous(name = "Center Blue", group = "main")
-class CenterBlue : InheritableAuto() {
+@Autonomous(name = "Center Red", group = "main")
+class CenterRed : InheritableAuto() {
     val subsystems = Subsystems()
 
     object Poses {
-        val start = Pose(18.3, 125.6, Math.toRadians(315.0))
-        val camera = Pose(34.2, 109.4, Math.toRadians(45.0))
-        val firstShootPosition = Pose(48.0, 96.0, Math.toRadians(125.0))
-        val shootPosition = Pose(48.0, 96.0, Math.toRadians(135.0))
-        val firstStrike = Pose(41.64, 85.51, Math.toRadians(180.0))
-        val getFirstStrike = Pose(18.0, 85.51, Math.toRadians(180.0))
-        val finish = Pose(48.0, 120.0, Math.toRadians(90.0))
+        val start = Pose(144-18.3, 125.6, Math.toRadians(225.0))
+        val camera = Pose(144-34.2, 109.4, Math.toRadians(135.0))
+        val firstShootPosition = Pose(144-48.0, 96.0, Math.toRadians(45.0))
+        val shootPosition = Pose(144-48.0, 96.0, Math.toRadians(45.0))
+        val firstStrike = Pose(144-41.64, 85.51, Math.toRadians(0.0))
+        val getFirstStrike = Pose(144-18.0, 85.51, Math.toRadians(0.0))
+        val finish = Pose(144-48.0, 120.0, Math.toRadians(90.0))
     }
 
     object PathChains : PathChain() {
