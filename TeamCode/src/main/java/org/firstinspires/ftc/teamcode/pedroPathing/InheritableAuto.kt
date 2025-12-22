@@ -82,7 +82,16 @@ abstract class InheritableAuto : Subsystems() {
     abstract fun buildPathChains()
     abstract fun pathUpdate()
 
+    /**
+     * Class representing the robot's subsystem actions. Should include all autonomous
+     * specific methods.
+     */
     inner class Subsystems {
+
+        /**
+         * Run the flywheel with the given amount of power.
+         * @param power The amount of power to give to the flywheel motor.
+         */
         fun flywheel(power: Double) {
             flywheel.power = -power
         }
@@ -121,6 +130,10 @@ abstract class InheritableAuto : Subsystems() {
             rightIntake.power = power
         }
 
+        /**
+         * Shoots three artifacts according to the detected obelisk state assuming
+         * that they are loaded in the GPP sequence.
+         */
         fun motifShot() {
             if (obeliskState == ObeliskStates.NONE) return
 
@@ -137,6 +150,11 @@ abstract class InheritableAuto : Subsystems() {
                 }
         }
 
+        /**
+         * Parses through the sensor detections to determine the colors to be associated with
+         * each carousel position. Then, according to the obelisk state, fires the loaded
+         * artifacts in the motif's order.
+         */
         fun colorMotifShot() {
             updateColors()
             if (obeliskState == ObeliskStates.NONE) return
@@ -160,9 +178,22 @@ abstract class InheritableAuto : Subsystems() {
         }
     }
 
+    /**
+     * Runs code if the robot is not busy (following a path).
+     * @param call The code to be run if the robot is not busy.
+     */
     fun busy(call: () -> Unit) {
         if (!follower.isBusy) {
             call()
         }
+    }
+
+    /**
+     * Sets the path state to a given integer state and resets the path timer.
+     * @param state The integer state to set pathState to.
+     */
+    fun setAndResetPathTimer(state: Int) {
+        pathState = state
+        pathTimer.resetTimer()
     }
 }

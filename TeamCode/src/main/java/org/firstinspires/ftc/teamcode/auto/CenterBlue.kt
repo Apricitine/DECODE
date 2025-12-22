@@ -63,16 +63,14 @@ class CenterBlue : InheritableAuto() {
         when (pathState) {
             0 -> {
                 follower.followPath(PathChains.getTag)
-                pathState = 1
-                pathTimer.resetTimer()
+                setAndResetPathTimer(1)
             }
 
             1 -> busy {
                 obeliskTag()
                 if (pathTimer.elapsedTimeSeconds > 2) {
                     follower.followPath(PathChains.shootBalls, true)
-                    pathState = 2
-                    pathTimer.resetTimer()
+                    setAndResetPathTimer(2)
                 }
             }
 
@@ -82,30 +80,26 @@ class CenterBlue : InheritableAuto() {
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 4) {
                     follower.followPath(PathChains.positionToGetFirstStrike, true)
-                    pathState = 3
-                    pathTimer.resetTimer()
+                    setAndResetPathTimer(3)
                 }
             }
 
             3 -> busy {
                 follower.followPath(PathChains.positionToGetFirstStrike, true)
-                pathState = 4
-                pathTimer.resetTimer()
+                setAndResetPathTimer(4)
             }
 
             4 -> busy {
                 subsystems.intake(1.0)
                 follower.followPath(PathChains.intakeFirstStrike, true)
-                pathState = 5
-                pathTimer.resetTimer()
+                setAndResetPathTimer(5)
             }
 
             5 -> busy {
                 subsystems.intake(1.0)
                 subsystems.flywheel(0.65)
                 follower.followPath(PathChains.shootStrikes, true)
-                pathState = 6
-                pathTimer.resetTimer()
+                setAndResetPathTimer(6)
             }
 
             6 -> busy {
@@ -113,15 +107,13 @@ class CenterBlue : InheritableAuto() {
                 subsystems.colorMotifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 6) {
-                    pathState = 7
-                    pathTimer.resetTimer()
+                    setAndResetPathTimer(7)
                 }
             }
             7 -> busy {
                 subsystems.intake(0.0)
                 follower.followPath(PathChains.park)
-                pathState = -1
-                pathTimer.resetTimer()
+                setAndResetPathTimer(-1)
             }
 
             else -> {}
