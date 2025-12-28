@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
@@ -73,6 +74,9 @@ abstract class Inheritable : Subsystems() {
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel.direction = DcMotorSimple.Direction.REVERSE
     }
 
     fun drive(power: Double) {
@@ -254,8 +258,8 @@ abstract class Inheritable : Subsystems() {
             if (flywheelSlowRunning) flywheelSlowRunning = false
         }
 
-        if (flywheelSlowRunning) flywheel.power = -0.65
-        else if (flywheelFastRunning) flywheel.power = -1.0
+        if (flywheelSlowRunning) flywheel.power = 0.65
+        else if (flywheelFastRunning) flywheel.power = 1.0
         else flywheel.power = 0.0
     }
 

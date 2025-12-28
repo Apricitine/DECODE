@@ -8,6 +8,7 @@ import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
@@ -43,6 +44,9 @@ abstract class InheritableAuto : Subsystems() {
         hood.position = 1.0
         hood.direction = Servo.Direction.REVERSE
         hood.position = 0.07
+
+        flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel.direction = DcMotorSimple.Direction.REVERSE
     }
 
     override fun start() {
@@ -93,7 +97,7 @@ abstract class InheritableAuto : Subsystems() {
          * @param power The amount of power to give to the flywheel motor.
          */
         fun flywheel(power: Double) {
-            flywheel.power = -power
+            flywheel.power = power
         }
 
         /**
