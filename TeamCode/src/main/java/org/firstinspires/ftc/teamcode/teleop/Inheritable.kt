@@ -66,9 +66,6 @@ abstract class Inheritable : Subsystems() {
         plunger.position = 0.02
         leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        hood.position = 1.0
-        hood.direction = Servo.Direction.REVERSE
-        hood.position = 0.07
 
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER

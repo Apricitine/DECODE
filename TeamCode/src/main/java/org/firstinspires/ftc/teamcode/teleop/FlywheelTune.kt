@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.pedropathing.control.PIDFCoefficients
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.util.Button
 
+@TeleOp(name = "Flywheel Tuner", group = "main")
 class FlywheelTune : Inheritable() {
 
-    val highVelocity = 6000.0
+    // ticks per second
+    val highVelocity = 1920.0
     val lowVelocity = 3900.0
 
     var currentTargetVelocity = highVelocity
@@ -30,6 +33,8 @@ class FlywheelTune : Inheritable() {
     }
 
     override fun loop() {
+        super.loop()
+
         if (a.`is`(Button.States.TAP)) {
             currentTargetVelocity = if (currentTargetVelocity == highVelocity) lowVelocity
             else highVelocity
@@ -53,11 +58,11 @@ class FlywheelTune : Inheritable() {
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
 
         flywheel.velocity = currentTargetVelocity
-        val currentVelocity: Double = flywheel.velocity
-        val error = currentTargetVelocity - currentVelocity
+
+        val error = currentTargetVelocity - flywheel.velocity
 
         log("target velocity", currentTargetVelocity)
-        log("current velocity", currentVelocity)
+        log("current velocity", flywheel.velocity)
         log("error", error)
         log("---------------------------------------------")
         log("tuning P", Coefficients.P)
