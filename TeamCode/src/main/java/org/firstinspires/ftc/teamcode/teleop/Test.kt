@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 @TeleOp(name = "Test", group = "Main")
 class Test : Inheritable() {
     override fun loop() {
-        updateButtons()
-        follower.update()
-        panelsTelemetry.update()
+        super.loop()
 
         quickShot(up)
 

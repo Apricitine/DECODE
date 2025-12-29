@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 @TeleOp(name = "Reset", group = "Main")
 class Reset : Inheritable() {
     override fun loop() {
-        updateButtons()
-        follower.update()
-        panelsTelemetry.update()
+        super.loop()
 
         drive(driveSpeed(rightBumper))
 

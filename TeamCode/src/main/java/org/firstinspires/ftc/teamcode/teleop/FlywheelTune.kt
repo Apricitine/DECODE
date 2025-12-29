@@ -7,18 +7,18 @@ import org.firstinspires.ftc.teamcode.util.Button
 class FlywheelTune : Inheritable() {
 
     // rotations per minute (needs to be updated)
-    val highVelocity = 1000
-    val lowVelocity = 500
+    val highVelocity = 6000.0
+    val lowVelocity = 3900.0
 
     var currentTargetVelocity = highVelocity
 
     object Coefficients {
-        val P: Double = 0.0
-        val F: Double = 0.0
+        var P: Double = 0.0
+        var F: Double = 0.0
     }
 
-    val stepSizes = listOf(10, 1, 0.1, 0.001, 0.0001)
-    val stepIndex = 1
+    val stepSizes: List<Double> = listOf(10.0, 1.0, 0.1, 0.001, 0.0001)
+    var stepIndex = 1
 
     override fun start() {
         super.start()
@@ -32,7 +32,39 @@ class FlywheelTune : Inheritable() {
 
     override fun loop() {
         if (a.`is`(Button.States.TAP)) {
-
+            currentTargetVelocity = if (currentTargetVelocity == highVelocity) lowVelocity
+            else highVelocity
         }
+        if (b.`is`(Button.States.TAP)) {
+            stepIndex = (stepIndex + 1) % stepSizes.size
+        }
+
+        if (left.`is`(Button.States.TAP)) Coefficients.F -= stepSizes[stepIndex]
+        if (right.`is`(Button.States.TAP)) Coefficients.F += stepSizes[stepIndex]
+
+        if (down.`is`(Button.States.TAP)) Coefficients.P -= stepSizes[stepIndex]
+        if (up.`is`(Button.States.TAP)) Coefficients.P += stepSizes[stepIndex]
+
+        val pidfCoefficients = com.qualcomm.robotcore.hardware.PIDFCoefficients(
+            Coefficients.P,
+            0.0,
+            0.0,
+            Coefficients.F
+        )
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
+
+        flywheel.velocity = currentTargetVelocity
+        val currentVelocity: Double = flywheel.velocity
+        val error = currentTargetVelocity - currentVelocity
+
+        log("target velocity", currentTargetVelocity)
+        log("current velocity", currentVelocity)
+        log("error", error)
+        log("---------------------------------------------")
+        log("tuning P", Coefficients.P)
+        log("tuning F", Coefficients.F)
+        log("step size", stepSizes[stepIndex])
+
+
     }
 }

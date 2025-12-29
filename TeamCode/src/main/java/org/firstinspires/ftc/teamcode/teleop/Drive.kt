@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 @TeleOp(name = "Drive", group = "Main")
 class Drive : Inheritable() {
     override fun loop() {
-        updateButtons()
-        follower.update()
-        panelsTelemetry.update()
+        super.loop()
 
         intake(rightBumper, leftBumper)
         carousel(y, b, x)

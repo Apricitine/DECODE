@@ -79,6 +79,12 @@ abstract class Inheritable : Subsystems() {
         flywheel.direction = DcMotorSimple.Direction.REVERSE
     }
 
+    override fun loop() {
+        updateButtons()
+        follower.update()
+        panelsTelemetry.update()
+    }
+
     fun drive(power: Double) {
         follower.setTeleOpDrive(
             -gamepad1.left_stick_y * power,
