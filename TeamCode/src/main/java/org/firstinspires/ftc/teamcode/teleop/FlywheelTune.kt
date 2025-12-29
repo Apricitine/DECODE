@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.util.Button
 
 class FlywheelTune : Inheritable() {
 
-    // rotations per minute (needs to be updated)
     val highVelocity = 6000.0
     val lowVelocity = 3900.0
 

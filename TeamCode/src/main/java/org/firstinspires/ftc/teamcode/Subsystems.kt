@@ -24,7 +24,6 @@ abstract class Subsystems : OpMode() {
     lateinit var rightIntake: CRServo
     lateinit var carousel: Servo
     lateinit var plunger: Servo
-    lateinit var hood: Servo
     lateinit var leftLift: DcMotorEx
     lateinit var rightLift: DcMotorEx
     protected lateinit var flywheel: DcMotorEx
@@ -65,7 +64,6 @@ abstract class Subsystems : OpMode() {
         rightIntake = hardwareMap.get(CRServo::class.java, "rightIntake")
         carousel = hardwareMap.get(Servo::class.java, "carousel")
         plunger = hardwareMap.get(Servo::class.java, "plunger")
-        hood = hardwareMap.get(Servo::class.java, "hood")
 
         leftLift = hardwareMap.get(DcMotorEx::class.java, "leftLift")
         rightLift = hardwareMap.get(DcMotorEx::class.java, "rightLift")

@@ -41,9 +41,6 @@ abstract class InheritableAuto : Subsystems() {
         carousel.position = Utility.Constants.BASE
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
-        hood.position = 1.0
-        hood.direction = Servo.Direction.REVERSE
-        hood.position = 0.07
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel.direction = DcMotorSimple.Direction.REVERSE

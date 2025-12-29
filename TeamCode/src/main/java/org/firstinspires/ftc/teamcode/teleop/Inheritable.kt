@@ -119,18 +119,6 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun hood(button: Button) {
-        if (button.`is`(Button.States.TAP)) {
-            if (!hoodUp) {
-                hood.position = 0.07
-                hoodUp = true
-            } else {
-                hood.position = 0.0
-                hoodUp = false
-            }
-        }
-    }
-
     fun carousel(front: Button, right: Button, left: Button) {
         if (!plungerBusy) {
             if (front.`is`(Button.States.TAP)) {
