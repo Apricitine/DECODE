@@ -7,6 +7,7 @@ import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFol
 import org.firstinspires.ftc.teamcode.util.Button
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import java.lang.Thread.sleep
+import kotlin.math.atan2
 
 enum class LiftStages {
     ZERO, ONE, TWO, THREE, FOUR
@@ -54,7 +56,7 @@ abstract class Inheritable : Subsystems() {
         initializeProcessor()
 
         rightBaseline = calibrate(rightSensor)
-        leftBaseline  = calibrate(leftSensor)
+        leftBaseline = calibrate(leftSensor)
         frontBaseline = calibrate(frontSensor)
     }
 
@@ -71,6 +73,11 @@ abstract class Inheritable : Subsystems() {
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        flywheel.setPIDFCoefficients(
+            DcMotor.RunMode.RUN_USING_ENCODER,
+            PIDFCoefficients(40.0, 0.0, 0.0, 15.0)
+        )
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel.direction = DcMotorSimple.Direction.REVERSE
@@ -273,25 +280,15 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun align(button: Button, distance: Double? = null) {
-        val tagPose: AprilTagPoseFtc = (processor.detections.firstOrNull {
-            it.metadata != null && it.id !in 21..23
-        } ?: return)
-            .ftcPose ?: return
-        val x = tagPose.x * 39.37
-        val y = tagPose.y * 37.37 - (distance ?: 0.0)
+        if (!follower.isBusy) follower.startTeleopDrive()
+        if (button.`is`(Button.States.TAP)) {
+            val tagPose: AprilTagPoseFtc = (processor.detections.firstOrNull {
+                it.metadata != null && it.id !in 21..23
+            } ?: return)
+                .ftcPose ?: return
 
-        follower.followPath(
-            Path(
-                BezierLine(
-                    Pose(0.0, 0.0, 0.0),
-                    Pose(
-                        x,
-                        if (distance != null) y else tagPose.y * 39.37,
-                        Math.toRadians(tagPose.yaw.toDouble())
-                    )
-                )
-            )
-        )
+            follower.turn(atan2(tagPose.x, tagPose.y), false)
+        }
     }
 
     fun updateButtons() {

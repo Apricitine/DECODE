@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMa
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
+import java.lang.Math.toDegrees
+import kotlin.math.atan2
 
 abstract class Subsystems : OpMode() {
 
@@ -161,6 +163,17 @@ abstract class Subsystems : OpMode() {
                 if (detection.id == 22) obeliskState = ObeliskStates.PGP
                 if (detection.id == 23) obeliskState = ObeliskStates.PPG
                 log("tag", obeliskState)
+            }
+        }
+    }
+
+    fun logGoalTagDistance() {
+        for (detection in processor.detections) {
+            if (detection.id !in 21..23) {
+                log("y distance from tag", detection.ftcPose.y)
+                log("x distance from tag", detection.ftcPose.x)
+                log("yaw from tag", detection.ftcPose.yaw)
+                log("angular offset to tag", toDegrees(atan2(detection.ftcPose.x, detection.ftcPose.y)))
             }
         }
     }

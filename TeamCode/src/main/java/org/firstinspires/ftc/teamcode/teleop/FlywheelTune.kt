@@ -9,14 +9,14 @@ import org.firstinspires.ftc.teamcode.util.Button
 class FlywheelTune : Inheritable() {
 
     // ticks per second
-    val highVelocity = 1440.0
-    val lowVelocity = 1120.0
+    val highVelocity = 1340.0
+    val lowVelocity = 1000.0
 
     var currentTargetVelocity = highVelocity
 
     object Coefficients {
-        var P: Double = 0.0
-        var F: Double = 0.0
+        var P: Double = 40.0
+        var F: Double = 15.0
     }
 
     val stepSizes: List<Double> = listOf(10.0, 1.0, 0.1, 0.001, 0.0001)
