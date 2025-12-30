@@ -39,9 +39,8 @@ class FlywheelTune : Inheritable() {
             currentTargetVelocity = if (currentTargetVelocity == highVelocity) lowVelocity
             else highVelocity
         }
-        if (b.`is`(Button.States.TAP)) {
-            stepIndex = (stepIndex + 1) % stepSizes.size
-        }
+        if (b.`is`(Button.States.TAP)) stepIndex = (stepIndex + 1) % stepSizes.size
+
 
         if (left.`is`(Button.States.TAP)) Coefficients.F -= stepSizes[stepIndex]
         if (right.`is`(Button.States.TAP)) Coefficients.F += stepSizes[stepIndex]
@@ -55,15 +54,14 @@ class FlywheelTune : Inheritable() {
             0.0,
             Coefficients.F
         )
+
         flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
 
         flywheel.velocity = currentTargetVelocity
 
-        val error = currentTargetVelocity - flywheel.velocity
-
         log("target velocity", currentTargetVelocity)
         log("current velocity", flywheel.velocity)
-        log("error", error)
+        log("error", currentTargetVelocity - flywheel.velocity)
         log("---------------------------------------------")
         log("tuning P", Coefficients.P)
         log("tuning F", Coefficients.F)
