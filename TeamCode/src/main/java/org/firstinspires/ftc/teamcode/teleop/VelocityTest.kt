@@ -5,11 +5,19 @@ import org.firstinspires.ftc.teamcode.util.Button
 
 @TeleOp(name = "Velocity Test", group = "main")
 class VelocityTest : Inheritable() {
+    var v = 2280.0
+
     override fun loop() {
         super.loop()
 
-        if (up.`is`(Button.States.TAP)) flywheel.velocity += 10
-        if (down.`is`(Button.States.TAP)) flywheel.velocity -= 10
+
+
+        plunger(a)
+
+        if (up.`is`(Button.States.TAP)) v += 10.0
+        if (down.`is`(Button.States.TAP)) v -= 10.0
+        flywheel.velocity = v
         log("current velocity", flywheel.velocity)
+        log("target velocity", v)
     }
 }
