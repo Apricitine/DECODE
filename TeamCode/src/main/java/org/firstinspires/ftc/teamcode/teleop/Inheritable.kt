@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.MIN_TICKS_PER_SECOND
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.TICKS_PER_SECOND_PER_INCH
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
@@ -27,13 +29,11 @@ abstract class Inheritable : Subsystems() {
     protected var carouselState: CarouselStates = CarouselStates.FRONT
     private var intakeRunning: Boolean = false
     private var intakeReverseRunning: Boolean = false
-    private var flywheelSlowRunning: Boolean = false
-    private var flywheelFastRunning: Boolean = false
-    private var hoodUp: Boolean = false
-
     private var plungerBusy: Boolean = false
-
+    private var flywheelRunning: Boolean = false
     private var liftState = LiftStages.ZERO
+
+    private var goalTagPose: AprilTagPoseFtc? = null
 
     val a = Button()
     val b = Button()
@@ -43,7 +43,6 @@ abstract class Inheritable : Subsystems() {
     val right = Button()
     val left = Button()
     val down = Button()
-
     val rightBumper = Button()
     val rightTrigger = Button()
     val leftBumper = Button()
@@ -84,6 +83,7 @@ abstract class Inheritable : Subsystems() {
     }
 
     override fun loop() {
+        updateTagPose()
         updateButtons()
         follower.update()
         panelsTelemetry.update()
@@ -96,6 +96,14 @@ abstract class Inheritable : Subsystems() {
             -gamepad1.right_stick_x * power,
             true
         )
+    }
+
+    fun driveSpeed(button: Button): Double {
+        return if (button.`is`(Button.States.TAP)) {
+            0.25
+        } else {
+            1.0
+        }
     }
 
     fun intake(button: Button, reverseButton: Button) {
@@ -146,12 +154,13 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun driveSpeed(button: Button): Double {
-        return if (button.`is`(Button.States.TAP)) {
-            0.25
-        } else {
-            1.0
-        }
+    fun lift(button: Button) {
+        TODO("new lift code")
+    }
+
+    fun flywheel(button: Button) {
+        if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
+        goalTagPose?.let { flywheel.velocity = getTicksPerSecond { it.y - 2.0 } }
     }
 
     private fun plungerMotion() {
@@ -167,19 +176,19 @@ abstract class Inheritable : Subsystems() {
             updateColors()
             if (frontColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.BASE
-//                sleep(300)
-//                plungerMotion()
+                sleep(300)
+                plungerMotion()
             } else if (rightColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-//                sleep(300)
-//                plungerMotion()
-//                sleep(300)
+                sleep(300)
+                plungerMotion()
+                sleep(300)
                 carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-//                sleep(300)
-//                plungerMotion()
-//                sleep(300)
+                sleep(300)
+                plungerMotion()
+                sleep(300)
                 carousel.position = Utility.Constants.BASE
             }
         }
@@ -187,83 +196,27 @@ abstract class Inheritable : Subsystems() {
             updateColors()
             if (frontColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.BASE
-//                sleep(300)
-//                plungerMotion()
+                sleep(300)
+                plungerMotion()
             } else if (rightColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-//                sleep(300)
-//                plungerMotion()
-//                sleep(300)
+                sleep(300)
+                plungerMotion()
+                sleep(300)
                 carousel.position = Utility.Constants.BASE
             } else if (leftColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-//                sleep(300)
-//                plungerMotion()
-//                sleep(300)
+                sleep(300)
+                plungerMotion()
+                sleep(300)
                 carousel.position = Utility.Constants.BASE
             }
         }
     }
 
-    fun lift() {
-        log("lift state", liftState)
-        if (liftState == LiftStages.ZERO) {
-            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_ONE) leftLift.power =
-                gamepad2.left_stick_y.toDouble()
-            else leftLift.power = 0.0
-            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_ONE) rightLift.power =
-                -gamepad2.left_stick_y.toDouble()
-            else rightLift.power = 0.0
-            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_ONE && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_ONE) liftState =
-                LiftStages.ONE
-        } else if (liftState == LiftStages.ONE) {
-            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_TWO) leftLift.power =
-                gamepad2.left_stick_y.toDouble()
-            else leftLift.power = 0.0
-            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_TWO) rightLift.power =
-                -gamepad2.left_stick_y.toDouble()
-            else rightLift.power = 0.0
-            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_TWO && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_TWO) liftState =
-                LiftStages.TWO
-        } else if (liftState == LiftStages.TWO) {
-            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_THREE) leftLift.power =
-                gamepad2.left_stick_y.toDouble()
-            else leftLift.power = 0.0
-            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_THREE) rightLift.power =
-                -gamepad2.left_stick_y.toDouble()
-            else rightLift.power = 0.0
-            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_THREE && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_THREE) liftState =
-                LiftStages.THREE
-        } else if (liftState == LiftStages.THREE) {
-            if (leftLift.currentPosition >= -Utility.Constants.LIFT_STAGE_FOUR) leftLift.power =
-                gamepad2.left_stick_y.toDouble()
-            else leftLift.power = 0.0
-            if (rightLift.currentPosition <= Utility.Constants.LIFT_STAGE_FOUR) rightLift.power =
-                -gamepad2.left_stick_y.toDouble()
-            else rightLift.power = 0.0
-            if (leftLift.currentPosition <= -Utility.Constants.LIFT_STAGE_FOUR && rightLift.currentPosition >= Utility.Constants.LIFT_STAGE_FOUR) liftState =
-                LiftStages.FOUR
-        }
-    }
-
-    fun flywheel(buttonSlow: Button, buttonFast: Button) {
-        if (buttonSlow.`is`(Button.States.TAP)) {
-            flywheelSlowRunning = !flywheelSlowRunning
-            if (flywheelFastRunning) flywheelFastRunning = false
-        }
-        if (buttonFast.`is`(Button.States.TAP)) {
-            flywheelFastRunning = !flywheelFastRunning
-            if (flywheelSlowRunning) flywheelSlowRunning = false
-        }
-
-        if (flywheelSlowRunning) flywheel.power = 0.65
-        else if (flywheelFastRunning) flywheel.power = 1.0
-        else flywheel.power = 0.0
-    }
-
     fun quickShot(button: Button) {
         if (button.`is`(Button.States.TAP)) {
-            flywheelSlowRunning = true
+            // flywheel
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
@@ -275,20 +228,21 @@ abstract class Inheritable : Subsystems() {
             plungerMotion()
             sleep(300)
             carousel.position = 0.02
-            flywheelSlowRunning = false
+            // flywheel
         }
     }
 
-    fun align(button: Button, distance: Double? = null) {
+    fun align(button: Button) {
         if (!follower.isBusy) follower.startTeleopDrive()
         if (button.`is`(Button.States.TAP)) {
-            val tagPose: AprilTagPoseFtc = (processor.detections.firstOrNull {
-                it.metadata != null && it.id !in 21..23
-            } ?: return)
-                .ftcPose ?: return
-
-            follower.turn(atan2(tagPose.x, tagPose.y), false)
+            goalTagPose?.let { follower.turn(atan2(it.x, it.y), false) }
         }
+    }
+
+    fun updateTagPose() {
+        goalTagPose = processor.detections.firstOrNull {
+            it.metadata != null && it.id !in 21..23
+        }?.ftcPose
     }
 
     fun updateButtons() {

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.MIN_TICKS_PER_SECOND
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.TICKS_PER_SECOND_PER_INCH
 import java.lang.reflect.Field
 import kotlin.math.atan
 
@@ -29,25 +31,21 @@ class Utility {
             override fun compareTo(o: T) = 0
         })(x) as T
 
-    fun artifactTrajectory() {
-        atan(Constants.ARTIFACT_EXIT_VELOCITY)
-    }
-
     class Constants {
+
         companion object {
             const val BASE: Double = 0.019
             const val SINGLE_ROTATION_CAROUSEL: Double = 0.395
             const val DOUBLE_ROTATION_CAROUSEL: Double = 0.775
+
+            const val TICKS_PER_SECOND_PER_INCH: Double = 4.47114
+            const val MIN_TICKS_PER_SECOND: Double = 783.75909
 
             const val LIFT_STAGE_ZERO: Double = 0.0
             const val LIFT_STAGE_ONE: Double = 1150.0
             const val LIFT_STAGE_TWO: Double = 2300.0
             const val LIFT_STAGE_THREE: Double = 3450.0
             const val LIFT_STAGE_FOUR: Double = 4600.0
-
-            val GOAL_HEIGHT: Double = 38.75 / 39.37
-            val ARTIFACT_EXIT_VELOCITY: Double = 10.0
-
 
             object Purple {
                 val red = 0.0013122
@@ -56,4 +54,6 @@ class Utility {
             }
         }
     }
+
+
 }

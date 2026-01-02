@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.MIN_TICKS_PER_SECOND
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.TICKS_PER_SECOND_PER_INCH
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import java.lang.Math.toDegrees
@@ -176,5 +178,9 @@ abstract class Subsystems : OpMode() {
                 log("angular offset to tag", toDegrees(atan2(detection.ftcPose.x, detection.ftcPose.y)))
             }
         }
+    }
+
+    fun getTicksPerSecond(call: () -> Double): Double {
+        return call() * TICKS_PER_SECOND_PER_INCH + MIN_TICKS_PER_SECOND
     }
 }
