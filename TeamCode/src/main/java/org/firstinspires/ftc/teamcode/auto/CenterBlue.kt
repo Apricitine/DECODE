@@ -5,7 +5,6 @@ import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
-import java.lang.Thread.sleep
 
 @Autonomous(name = "Center Blue", group = "main")
 class CenterBlue : InheritableAuto() {
@@ -31,17 +30,17 @@ class CenterBlue : InheritableAuto() {
     }
 
     override fun loop() {
-        follower.update()
-        follower.setStartingPose(Poses.start)
+        robot.update()
+        robot.setStartingPose(Poses.start)
         panelsTelemetry.update()
-        currentPose = follower.pose
+        currentPose = robot.pose
 
         pathUpdate()
 
         log("path state", pathState)
-        log("x", follower.pose.x)
-        log("y", follower.pose.y)
-        log("heading", follower.pose.heading)
+        log("x", robot.pose.x)
+        log("y", robot.pose.y)
+        log("heading", robot.pose.heading)
     }
 
     override fun buildPathChains() {
@@ -51,7 +50,7 @@ class CenterBlue : InheritableAuto() {
         PathChains.positionToGetFirstStrike =
             linearPathChain(Poses.shootPosition, Poses.firstStrike)
         PathChains.intakeFirstStrike =
-            follower.pathBuilder()
+            robot.pathBuilder()
                 .addPath(BezierLine(Poses.firstStrike, Poses.getFirstStrike))
                 .setBrakingStrength(0.25)
                 .build()
@@ -62,14 +61,14 @@ class CenterBlue : InheritableAuto() {
     override fun pathUpdate() {
         when (pathState) {
             0 -> {
-                follower.followPath(PathChains.getTag)
+                robot.followPath(PathChains.getTag)
                 setAndResetPathTimer(1)
             }
 
             1 -> busy {
                 obeliskTag()
                 if (pathTimer.elapsedTimeSeconds > 2) {
-                    follower.followPath(PathChains.shootBalls, true)
+                    robot.followPath(PathChains.shootBalls, true)
                     setAndResetPathTimer(2)
                 }
             }
@@ -79,26 +78,26 @@ class CenterBlue : InheritableAuto() {
                 subsystems.motifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 4) {
-                    follower.followPath(PathChains.positionToGetFirstStrike, true)
+                    robot.followPath(PathChains.positionToGetFirstStrike, true)
                     setAndResetPathTimer(3)
                 }
             }
 
             3 -> busy {
-                follower.followPath(PathChains.positionToGetFirstStrike, true)
+                robot.followPath(PathChains.positionToGetFirstStrike, true)
                 setAndResetPathTimer(4)
             }
 
             4 -> busy {
                 subsystems.intake(1.0)
-                follower.followPath(PathChains.intakeFirstStrike, true)
+                robot.followPath(PathChains.intakeFirstStrike, true)
                 setAndResetPathTimer(5)
             }
 
             5 -> busy {
                 subsystems.intake(1.0)
                 subsystems.flywheel(0.65)
-                follower.followPath(PathChains.shootStrikes, true)
+                robot.followPath(PathChains.shootStrikes, true)
                 setAndResetPathTimer(6)
             }
 
@@ -112,7 +111,7 @@ class CenterBlue : InheritableAuto() {
             }
             7 -> busy {
                 subsystems.intake(0.0)
-                follower.followPath(PathChains.park)
+                robot.followPath(PathChains.park)
                 setAndResetPathTimer(-1)
             }
 

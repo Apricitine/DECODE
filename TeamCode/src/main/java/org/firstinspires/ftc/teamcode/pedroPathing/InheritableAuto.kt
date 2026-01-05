@@ -2,19 +2,15 @@ package org.firstinspires.ftc.teamcode.pedroPathing
 
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.Path
 import com.pedropathing.paths.PathChain
 import com.pedropathing.util.Timer
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
 import java.lang.Thread.sleep
-import kotlin.reflect.KFunction
 
 abstract class InheritableAuto : Subsystems() {
     lateinit var currentPose: Pose
@@ -29,7 +25,7 @@ abstract class InheritableAuto : Subsystems() {
         initializeSubsystems()
         initializeProcessor()
 
-        follower = Constants.createFollower(hardwareMap)
+        robot = Constants.createFollower(hardwareMap)
         buildPathChains()
 
         pathTimer = Timer()
@@ -70,7 +66,7 @@ abstract class InheritableAuto : Subsystems() {
         interpolationEndPose: Pose? = null,
         brakingStrength: Double = 1.0
     ): PathChain {
-        return follower.pathBuilder()
+        return robot.pathBuilder()
             .addPath(BezierLine(startPose, endPose))
             .setLinearHeadingInterpolation(
                 interpolationStartPose?.heading ?: startPose.heading,
@@ -184,7 +180,7 @@ abstract class InheritableAuto : Subsystems() {
      * @param call The code to be run if the robot is not busy.
      */
     fun busy(call: () -> Unit) {
-        if (!follower.isBusy) {
+        if (!robot.isBusy) {
             call()
         }
     }

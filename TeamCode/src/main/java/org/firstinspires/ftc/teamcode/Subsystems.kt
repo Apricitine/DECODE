@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode
 
-import android.hardware.Sensor
 import com.bylazar.telemetry.PanelsTelemetry
 import com.bylazar.telemetry.TelemetryManager
 import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.CRServo
-import com.qualcomm.robotcore.hardware.CompassSensor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.MIN_TICKS_PER_SECOND
 import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.TICKS_PER_SECOND_PER_INCH
@@ -21,6 +18,8 @@ import java.lang.Math.toDegrees
 import kotlin.math.atan2
 
 abstract class Subsystems : OpMode() {
+
+    lateinit var timeSinceLastColorUpdate: ElapsedTime
 
     protected var obeliskState: ObeliskStates = ObeliskStates.NONE
 
@@ -35,7 +34,7 @@ abstract class Subsystems : OpMode() {
     lateinit var panelsTelemetry: TelemetryManager
     lateinit var processor: AprilTagProcessor
     lateinit var portal: VisionPortal
-    lateinit var follower: Follower
+    lateinit var robot: Follower
 
     lateinit var frontSensor: NormalizedColorSensor
     lateinit var rightSensor: NormalizedColorSensor
@@ -78,7 +77,6 @@ abstract class Subsystems : OpMode() {
         leftSensor = hardwareMap.get(NormalizedColorSensor::class.java, "leftSensor")
 
         panelsTelemetry = PanelsTelemetry.telemetry
-
     }
 
     /**
@@ -143,6 +141,8 @@ abstract class Subsystems : OpMode() {
     }
 
     fun updateColors() {
+        timeSinceLastColorUpdate.reset()
+
         frontColor = identifyColor(frontSensor)
         rightColor = identifyColor(rightSensor)
         leftColor = identifyColor(leftSensor)

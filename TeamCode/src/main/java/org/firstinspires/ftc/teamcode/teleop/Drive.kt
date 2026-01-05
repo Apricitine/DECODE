@@ -7,23 +7,32 @@ class Drive : Inheritable() {
     override fun loop() {
         super.loop()
 
-        drive(1.0)
+        drive(a1, 1.0)
         intake(rightBumper, leftBumper)
         carousel(y, b, x)
-        colorShot(left, right)
-
-        lift(leftStick)
         plunger(a)
+        lift(leftStick)
         flywheel(rightTrigger)
+
+        colorShot(left, right)
         quickShot(up)
 
-        log("position", follower.pose)
-        log("velocity", follower.velocity)
-        log("carousel angle", carousel.position)
-        log("plunger angle", plunger.position)
+        log("subsystem states", "")
+        log("| carousel state", carouselState)
+        log("| plunger state", plungerBusy)
+        log("| lift state", liftState)
 
-        log("front color:", frontColor)
-        log("left color:", leftColor)
-        log("right color:", rightColor)
+        log("\ncolor states (last updated ${kotlin.math.truncate(timeSinceLastColorUpdate.seconds())}s ago)", "")
+        log("| front", frontColor)
+        log("| left", leftColor)
+        log("| right", rightColor)
+
+        log("\nflywheel state", "")
+        log("| latest target velocity", targetVelocity)
+        log("| current velocity", flywheel.velocity)
+        log("| can we shoot?", if (canShoot) "YES" else "NO")
+
+        log("\nright lift", rightLift.currentPosition)
+
     }
 }
