@@ -41,11 +41,11 @@ class Utility {
             const val TICKS_PER_SECOND_PER_INCH: Double = 4.47114
             const val MIN_TICKS_PER_SECOND: Double = 783.75909
 
-            const val LIFT_STAGE_ZERO: Double = 0.0
-            const val LIFT_STAGE_ONE: Double = 1150.0
-            const val LIFT_STAGE_TWO: Double = 2300.0
-            const val LIFT_STAGE_THREE: Double = 3450.0
-            const val LIFT_STAGE_FOUR: Double = 4600.0
+            const val LIFT_STAGE_ZERO: Int = 0
+            const val LIFT_STAGE_ONE: Int = 1000
+            const val LIFT_STAGE_TWO: Int = 2000
+            const val LIFT_STAGE_THREE: Int = 3000
+            const val LIFT_STAGE_FOUR: Int = 4000
 
             object Purple {
                 val red = 0.0013122

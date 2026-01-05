@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.bylazar.configurables.annotations.Configurable
-import com.pedropathing.geometry.BezierLine
-import com.pedropathing.geometry.Pose
-import com.pedropathing.paths.Path
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -11,16 +8,18 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.MIN_TICKS_PER_SECOND
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.TICKS_PER_SECOND_PER_INCH
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_FOUR
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_ONE
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_THREE
+import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_TWO
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import java.lang.Thread.sleep
 import kotlin.math.atan2
 
-enum class LiftStages {
-    ZERO, ONE, TWO, THREE, FOUR
+enum class LiftStates {
+    ZERO, ONE, TWO, THREE
 }
 
 @Configurable
@@ -31,7 +30,8 @@ abstract class Inheritable : Subsystems() {
     private var intakeReverseRunning: Boolean = false
     private var plungerBusy: Boolean = false
     private var flywheelRunning: Boolean = false
-    private var liftState = LiftStages.ZERO
+    private var liftState = LiftStates.ZERO
+    private var lifting = false
 
     private var goalTagPose: AprilTagPoseFtc? = null
 
@@ -47,6 +47,8 @@ abstract class Inheritable : Subsystems() {
     val rightTrigger = Button()
     val leftBumper = Button()
     val leftTrigger = Button()
+    val leftStick = Button()
+    val rightStick = Button()
 
     override fun init() {
         initializeSubsystems()
@@ -68,14 +70,15 @@ abstract class Inheritable : Subsystems() {
         leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-        leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        rightLift.direction = DcMotorSimple.Direction.REVERSE
+
+        leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
+        rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER,
-            PIDFCoefficients(40.0, 0.0, 0.0, 15.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(40.0, 0.0, 0.0, 15.0)
         )
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -96,14 +99,6 @@ abstract class Inheritable : Subsystems() {
             -gamepad1.right_stick_x * power,
             true
         )
-    }
-
-    fun driveSpeed(button: Button): Double {
-        return if (button.`is`(Button.States.TAP)) {
-            0.25
-        } else {
-            1.0
-        }
     }
 
     fun intake(button: Button, reverseButton: Button) {
@@ -130,7 +125,6 @@ abstract class Inheritable : Subsystems() {
             rightIntake.power = 0.0
         }
     }
-
     fun carousel(front: Button, right: Button, left: Button) {
         if (!plungerBusy) {
             if (front.`is`(Button.States.TAP)) {
@@ -147,20 +141,37 @@ abstract class Inheritable : Subsystems() {
             }
         }
     }
-
     fun plunger(button: Button) {
         if (button.`is`(Button.States.TAP)) {
             plungerMotion()
         }
     }
-
     fun lift(button: Button) {
-        TODO("new lift code")
-    }
+        if (button.`is`(Button.States.TAP)) lifting = true
+        if (!lifting) return
 
+        val targets = intArrayOf(
+            LIFT_STAGE_ONE,
+            LIFT_STAGE_TWO,
+            LIFT_STAGE_THREE,
+            LIFT_STAGE_FOUR
+        )
+
+        leftLift.targetPosition = targets[liftState.ordinal]
+        rightLift.targetPosition = targets[liftState.ordinal]
+        leftLift.power = 0.4
+        rightLift.power = 0.4
+
+        if (liftState.ordinal < targets.lastIndex && !leftLift.isBusy && !rightLift.isBusy)
+            liftState = LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
+    }
     fun flywheel(button: Button) {
         if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
-        goalTagPose?.let { flywheel.velocity = getTicksPerSecond { it.y - 2.0 } }
+
+        if (flywheelRunning) goalTagPose?.let {
+            flywheel.velocity = getTicksPerSecond { it.y - 2.0 }
+        }
+        else flywheel.velocity = 0.0
     }
 
     private fun plungerMotion() {
@@ -213,7 +224,6 @@ abstract class Inheritable : Subsystems() {
             }
         }
     }
-
     fun quickShot(button: Button) {
         if (button.`is`(Button.States.TAP)) {
             // flywheel
@@ -231,7 +241,6 @@ abstract class Inheritable : Subsystems() {
             // flywheel
         }
     }
-
     fun align(button: Button) {
         if (!follower.isBusy) follower.startTeleopDrive()
         if (button.`is`(Button.States.TAP)) {
@@ -244,7 +253,6 @@ abstract class Inheritable : Subsystems() {
             it.metadata != null && it.id !in 21..23
         }?.ftcPose
     }
-
     fun updateButtons() {
         a.update(gamepad2.a)
         b.update(gamepad2.b)
@@ -255,9 +263,12 @@ abstract class Inheritable : Subsystems() {
         left.update(gamepad2.dpad_left)
         down.update(gamepad2.dpad_down)
         rightBumper.update(gamepad2.right_bumper)
+
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
         leftTrigger.update(gamepad2.left_trigger > 0.1)
+        leftStick.update(gamepad2.left_stick_button)
+        rightStick.update(gamepad2.right_stick_button)
 
     }
 }

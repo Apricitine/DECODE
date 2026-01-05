@@ -7,13 +7,15 @@ class Drive : Inheritable() {
     override fun loop() {
         super.loop()
 
+        drive(1.0)
         intake(rightBumper, leftBumper)
         carousel(y, b, x)
+        colorShot(left, right)
+
+        lift(leftStick)
         plunger(a)
         flywheel(rightTrigger)
         quickShot(up)
-        drive(1.0)
-        colorShot(left, right)
 
         log("position", follower.pose)
         log("velocity", follower.velocity)
