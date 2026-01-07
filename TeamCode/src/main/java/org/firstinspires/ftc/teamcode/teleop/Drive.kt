@@ -32,7 +32,7 @@ class Drive : Inheritable() {
         log("| current velocity", flywheel.velocity)
         log("| can we shoot?", if (canShoot) "YES" else "NO")
 
-        log("\nright lift", rightLift.currentPosition)
+        log("\nlifting?", lifting)
 
     }
 }

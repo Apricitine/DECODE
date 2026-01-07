@@ -32,7 +32,7 @@ abstract class Inheritable : Subsystems() {
     var plungerBusy: Boolean = false
     private var flywheelRunning: Boolean = false
     var liftState = LiftStates.ZERO
-    private var lifting = false
+    var lifting = false
     private var aligning = false
 
     var canShoot = false
@@ -57,6 +57,7 @@ abstract class Inheritable : Subsystems() {
     val rightStick = Button()
 
     val a1 = Button()
+    val b1 = Button()
 
     override fun init() {
         timeSinceLastColorUpdate = ElapsedTime()
@@ -80,10 +81,10 @@ abstract class Inheritable : Subsystems() {
         leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
 
-        leftLift.direction = DcMotorSimple.Direction.REVERSE
-
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+        leftLift.direction = DcMotorSimple.Direction.REVERSE
 
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
@@ -281,6 +282,7 @@ abstract class Inheritable : Subsystems() {
         rightBumper.update(gamepad2.right_bumper)
 
         a1.update(gamepad1.a)
+        b1.update(gamepad1.b)
 
         rightTrigger.update(gamepad2.right_trigger > 0.1)
         leftBumper.update(gamepad2.left_bumper)
