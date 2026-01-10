@@ -9,7 +9,7 @@ class VelocityTest : Inheritable() {
 
     override fun loop() {
         super.loop()
-
+        canShoot = true
         plunger(a)
 
         if (up.`is`(Button.States.TAP)) v += 10.0

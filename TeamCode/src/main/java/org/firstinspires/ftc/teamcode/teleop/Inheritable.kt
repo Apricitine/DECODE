@@ -89,7 +89,7 @@ abstract class Inheritable : Subsystems() {
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 16.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 15.0)
         )
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -103,10 +103,8 @@ abstract class Inheritable : Subsystems() {
         panelsTelemetry.update()
     }
 
-    fun drive(button: Button, power: Double) {
-        if (button.`is`(Button.States.TAP)) aligning = !aligning
-        if (aligning) goalTagPose?.let { robot.turn(atan2(it.x, it.y), false) }
-        else robot.setTeleOpDrive(
+    fun drive(power: Double) {
+        robot.setTeleOpDrive(
             -gamepad1.left_stick_y * power,
             -gamepad1.left_stick_x * power,
             -gamepad1.right_stick_x * power,
@@ -157,7 +155,7 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun plunger(button: Button) {
-        if (button.`is`(Button.States.TAP)) {
+        if (button.`is`(Button.States.TAP) && canShoot) {
             plungerMotion()
         }
     }
@@ -175,8 +173,8 @@ abstract class Inheritable : Subsystems() {
 
         leftLift.targetPosition = targets[liftState.ordinal]
         rightLift.targetPosition = -targets[liftState.ordinal]
-        leftLift.power = 0.4
-        rightLift.power = 0.4
+        leftLift.power = 0.7
+        rightLift.power = 0.7
         leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
         rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
@@ -191,7 +189,7 @@ abstract class Inheritable : Subsystems() {
         else targetVelocity = 0.0
 
         canShoot =
-            (kotlin.math.abs(flywheel.velocity - targetVelocity) <= 50) && targetVelocity != 0.0
+            (kotlin.math.abs(flywheel.velocity - targetVelocity) <= 100) && targetVelocity != 0.0
         flywheel.velocity = targetVelocity
     }
 
@@ -204,7 +202,7 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun colorShot(greenButton: Button, purpleButton: Button) {
-        if (greenButton.`is`(Button.States.TAP)) {
+        if (greenButton.`is`(Button.States.TAP) && canShoot) {
             updateColors()
             if (frontColor == COLORS.GREEN) {
                 carousel.position = Utility.Constants.BASE
@@ -224,7 +222,7 @@ abstract class Inheritable : Subsystems() {
                 carousel.position = Utility.Constants.BASE
             }
         }
-        if (purpleButton.`is`(Button.States.TAP)) {
+        if (purpleButton.`is`(Button.States.TAP) && canShoot) {
             updateColors()
             if (frontColor == COLORS.PURPLE) {
                 carousel.position = Utility.Constants.BASE
@@ -247,20 +245,27 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun quickShot(button: Button) {
-        if (button.`is`(Button.States.TAP)) {
+        if (button.`is`(Button.States.TAP) && canShoot) {
             // flywheel
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-            sleep(1000)
+            sleep(700)
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-            sleep(1000)
+            sleep(700)
             plungerMotion()
             sleep(300)
             carousel.position = 0.02
             // flywheel
+        }
+    }
+
+    fun align(button: Button) {
+        if (aligning) goalTagPose?.let {
+            log("aligning")
+            robot.turn(atan2(it.x, it.y), false)
         }
     }
 
