@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+import androidx.appcompat.widget.ButtonBarLayout
 import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -104,12 +105,24 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun drive(power: Double) {
-        robot.setTeleOpDrive(
-            -gamepad1.left_stick_y * power,
-            -gamepad1.left_stick_x * power,
-            -gamepad1.right_stick_x * power,
-            true
-        )
+        if (!aligning) {
+            robot.setTeleOpDrive(
+                -gamepad1.left_stick_y * power,
+                -gamepad1.left_stick_x * power,
+                -gamepad1.right_stick_x * power,
+                true
+            )
+        }
+
+        if (a1.`is`(Button.States.TAP)) {
+            align()
+            aligning = true
+        }
+
+        if (aligning && (a1.`is`(Button.States.TAP) || !robot.isBusy)) {
+            robot.startTeleopDrive()
+            aligning = false
+        }
     }
 
     fun intake(button: Button, reverseButton: Button) {
@@ -262,9 +275,8 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun align(button: Button) {
-        if (aligning) goalTagPose?.let {
-            log("aligning")
+    fun align() {
+        goalTagPose?.let {
             robot.turn(atan2(it.x, it.y), false)
         }
     }
