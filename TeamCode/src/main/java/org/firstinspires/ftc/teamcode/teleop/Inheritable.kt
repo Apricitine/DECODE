@@ -85,8 +85,6 @@ abstract class Inheritable : Subsystems() {
         leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
         rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
-        leftLift.direction = DcMotorSimple.Direction.REVERSE
-
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel.setPIDFCoefficients(
@@ -186,8 +184,8 @@ abstract class Inheritable : Subsystems() {
 
         leftLift.targetPosition = targets[liftState.ordinal]
         rightLift.targetPosition = -targets[liftState.ordinal]
-        leftLift.power = 0.7
-        rightLift.power = 0.7
+        leftLift.power = 0.9
+        rightLift.power = 0.9
         leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
         rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
