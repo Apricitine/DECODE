@@ -88,7 +88,7 @@ abstract class Inheritable : Subsystems() {
         rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 15.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
         )
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -261,11 +261,11 @@ abstract class Inheritable : Subsystems() {
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-            sleep(700)
+            sleep(600)
             plungerMotion()
             sleep(300)
             carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-            sleep(700)
+            sleep(1000)
             plungerMotion()
             sleep(300)
             carousel.position = 0.02

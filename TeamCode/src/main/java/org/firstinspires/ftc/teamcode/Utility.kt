@@ -39,7 +39,7 @@ class Utility {
             const val DOUBLE_ROTATION_CAROUSEL: Double = 0.775
 
             const val TICKS_PER_SECOND_PER_INCH: Double = 4.47114
-            const val MIN_TICKS_PER_SECOND: Double = 850.0
+            const val MIN_TICKS_PER_SECOND: Double = 900.0
 
             const val LIFT_STAGE_ZERO: Int = 0
             const val LIFT_STAGE_ONE: Int = 450
