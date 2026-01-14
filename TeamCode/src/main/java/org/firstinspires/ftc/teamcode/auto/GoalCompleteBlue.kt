@@ -96,7 +96,7 @@ class GoalCompleteBlue : InheritableAuto() {
             }
 
             2 -> busy {
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 subsystems.motifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 4) {
@@ -118,13 +118,13 @@ class GoalCompleteBlue : InheritableAuto() {
 
             5 -> busy {
                 subsystems.intake(1.0)
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootFirstStrike, true)
                 setAndResetPathTimer(6)
             }
 
             6 -> busy {
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 subsystems.colorMotifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 6) {
@@ -145,13 +145,13 @@ class GoalCompleteBlue : InheritableAuto() {
 
             9 -> busy {
                 subsystems.intake(1.0)
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootSecondStrike, true)
                 setAndResetPathTimer(10)
             }
 
             10 -> busy {
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 subsystems.colorMotifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 6) {
@@ -172,14 +172,14 @@ class GoalCompleteBlue : InheritableAuto() {
 
             13 -> busy {
                 subsystems.intake(1.0)
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootThirdStrike, true)
                 setAndResetPathTimer(14)
             }
 
             14 -> busy {
                 subsystems.intake(0.0)
-                subsystems.flywheel(0.65)
+                subsystems.flywheel(1100.0)
                 subsystems.colorMotifShot()
                 subsystems.flywheel(0.0)
                 if (pathTimer.elapsedTimeSeconds > 6) {

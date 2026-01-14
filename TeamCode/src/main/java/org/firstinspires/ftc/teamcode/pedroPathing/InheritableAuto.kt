@@ -87,10 +87,10 @@ abstract class InheritableAuto : Subsystems() {
 
         /**
          * Run the flywheel with the given amount of power.
-         * @param power The amount of power to give to the flywheel motor.
+         * @param velocity The amount of power to give to the flywheel motor.
          */
-        fun flywheel(power: Double) {
-            flywheel.power = power
+        fun flywheel(velocity: Double) {
+            flywheel.velocity = velocity
         }
 
         /**
