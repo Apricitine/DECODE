@@ -40,6 +40,8 @@ abstract class InheritableAuto : Subsystems() {
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel.direction = DcMotorSimple.Direction.REVERSE
+
+        timeSinceLastColorUpdate = ElapsedTime()
     }
 
     override fun start() {

@@ -11,7 +11,6 @@ class Drive : Inheritable() {
         intake(rightBumper, leftBumper)
         carousel(y, b, x)
         plunger(a)
-        lift(leftStick)
         flywheel(rightTrigger)
 
         colorShot(left, right)
