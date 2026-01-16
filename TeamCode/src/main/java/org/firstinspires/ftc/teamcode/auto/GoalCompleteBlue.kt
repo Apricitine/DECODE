@@ -7,21 +7,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
 
 @Autonomous(name = "Goal Complete Blue", group = "main")
-class GoalCompleteBlue : InheritableAuto() {
+open class GoalCompleteBlue : InheritableAuto() {
     val subsystems = Subsystems()
 
-    object Poses {
-        val start = Pose(18.3, 125.6, Math.toRadians(315.0))
-        val camera = Pose(34.2, 109.4, Math.toRadians(45.0))
-        val shoot = Pose(48.0, 96.0, Math.toRadians(135.0))
-        val firstStrike = Pose(48.0, 84.0, Math.toRadians(180.0))
-        val getFirstStrike = Pose(16.0, 84.0, Math.toRadians(180.0))
-        val secondStrike = Pose(48.0, 60.0, Math.toRadians(180.0))
-        val getSecondStrike = Pose(16.0, 60.0, Math.toRadians(180.0))
-        val thirdStrike = Pose(48.0, 36.0, Math.toRadians(180.0))
-        val getThirdStrike = Pose(16.0, 36.0, Math.toRadians(180.0))
-        val park = Pose(48.0, 120.0, Math.toRadians(90.0))
-    }
+    open val poses = mapOf(
+        "start" to Pose(18.3, 125.6, Math.toRadians(315.0)),
+        "camera" to Pose(34.2, 109.4, Math.toRadians(45.0)),
+        "shoot" to Pose(48.0, 96.0, Math.toRadians(135.0)),
+        "firstStrike" to Pose(48.0, 84.0, Math.toRadians(180.0)),
+         "getFirstStrike" to Pose(16.0, 84.0, Math.toRadians(180.0)),
+         "secondStrike" to Pose(48.0, 60.0, Math.toRadians(180.0)),
+         "getSecondStrike" to Pose(16.0, 60.0, Math.toRadians(180.0)),
+         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
+         "getThirdStrike" to Pose(16.0, 36.0, Math.toRadians(180.0)),
+         "park" to Pose(48.0, 120.0, Math.toRadians(90.0))
+    )
 
     object PathChains : PathChain() {
         lateinit var getTag: PathChain
@@ -40,7 +40,7 @@ class GoalCompleteBlue : InheritableAuto() {
 
     override fun loop() {
         robot.update()
-        robot.setStartingPose(Poses.start)
+        robot.setStartingPose(poses["start"])
         panelsTelemetry.update()
         currentPose = robot.pose
 
@@ -53,31 +53,31 @@ class GoalCompleteBlue : InheritableAuto() {
     }
 
     override fun buildPathChains() {
-        PathChains.getTag = linearPathChain(Poses.start, Poses.camera)
+        PathChains.getTag = linearPathChain(poses["start"], poses["camera"])
         PathChains.shootPreload =
-            linearPathChain(Poses.camera, Poses.shoot)
+            linearPathChain(poses["camera"], poses["shoot"])
         PathChains.firstStrike =
-            linearPathChain(Poses.shoot, Poses.firstStrike)
+            linearPathChain(poses["shoot"], poses["firstStrike"])
         PathChains.getFirstStrike =
             robot.pathBuilder()
-                .addPath(BezierLine(Poses.firstStrike, Poses.getFirstStrike))
+                .addPath(BezierLine(poses["firstStrike"], poses["getFirstStrike"]))
                 .build()
-        PathChains.shootFirstStrike = linearPathChain(Poses.getFirstStrike, Poses.shoot)
+        PathChains.shootFirstStrike = linearPathChain(poses["getFirstStrike"], poses["shoot"])
         PathChains.secondStrike =
-            linearPathChain(Poses.shoot, Poses.secondStrike)
+            linearPathChain(poses["shoot"], poses["secondStrike"])
         PathChains.getSecondStrike =
             robot.pathBuilder()
-                .addPath(BezierLine(Poses.secondStrike, Poses.getSecondStrike))
+                .addPath(BezierLine(poses["secondStrike"], poses["getSecondStrike"]))
                 .build()
-        PathChains.shootSecondStrike = linearPathChain(Poses.getSecondStrike, Poses.shoot)
+        PathChains.shootSecondStrike = linearPathChain(poses["getSecondStrike"], poses["shoot"])
         PathChains.thirdStrike =
-            linearPathChain(Poses.shoot, Poses.thirdStrike)
+            linearPathChain(poses["shoot"], poses["thirdStrike"])
         PathChains.getThirdStrike =
             robot.pathBuilder()
-                .addPath(BezierLine(Poses.thirdStrike, Poses.getThirdStrike))
+                .addPath(BezierLine(poses["thirdStrike"], poses["getThirdStrike"]))
                 .build()
-        PathChains.shootThirdStrike = linearPathChain(Poses.getThirdStrike, Poses.shoot)
-        PathChains.park = linearPathChain(Poses.shoot, Poses.park)
+        PathChains.shootThirdStrike = linearPathChain(poses["getThirdStrike"], poses["shoot"])
+        PathChains.park = linearPathChain(poses["shoot"], poses["park"])
     }
 
     override fun pathUpdate() {

@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
 import java.lang.Thread.sleep
+import kotlin.math.PI
 
 abstract class InheritableAuto : Subsystems() {
     lateinit var currentPose: Pose
@@ -62,8 +63,8 @@ abstract class InheritableAuto : Subsystems() {
      * @return A PathChain with the specified Poses integrated.
      */
     fun linearPathChain(
-        startPose: Pose,
-        endPose: Pose,
+        startPose: Pose?,
+        endPose: Pose?,
         interpolationStartPose: Pose? = null,
         interpolationEndPose: Pose? = null,
         brakingStrength: Double = 1.0
@@ -71,8 +72,8 @@ abstract class InheritableAuto : Subsystems() {
         return robot.pathBuilder()
             .addPath(BezierLine(startPose, endPose))
             .setLinearHeadingInterpolation(
-                interpolationStartPose?.heading ?: startPose.heading,
-                interpolationEndPose?.heading ?: endPose.heading
+                interpolationStartPose?.heading ?: startPose!!.heading,
+                interpolationEndPose?.heading ?: endPose!!.heading
             )
             .setBrakingStrength(brakingStrength)
             .build()
@@ -195,4 +196,21 @@ abstract class InheritableAuto : Subsystems() {
         pathState = state
         pathTimer.resetTimer()
     }
+
+    fun Pose.reflectOverX(center: Double = 72.0): Pose =
+        Pose(
+            2 * center - x,
+            y,
+            normalizeAngle(PI - heading)
+        )
+
+    private fun normalizeAngle(theta: Double): Double {
+        var t = theta
+        while (t <= -PI) t += 2 * PI
+        while (t > PI) t -= 2 * PI
+        return t
+    }
+
+    fun Map<String, Pose>.reflectOverX(center: Double = 72.0): Map<String, Pose> =
+        mapValues { (_, pose) -> pose.reflectOverX(center) }
 }
