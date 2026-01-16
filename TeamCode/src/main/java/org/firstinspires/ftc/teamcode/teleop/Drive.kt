@@ -13,6 +13,7 @@ class Drive : Inheritable() {
         plunger(a)
         flywheel(rightTrigger)
 
+        resetShot(down)
         colorShot(left, right)
         quickShot(up)
 

@@ -183,4 +183,48 @@ abstract class Subsystems : OpMode() {
     fun getTicksPerSecond(call: () -> Double): Double {
         return call() * TICKS_PER_SECOND_PER_INCH + MIN_TICKS_PER_SECOND
     }
+
+    class TimedSequence {
+
+        private val steps = mutableListOf<() -> Boolean>()
+        private var currentStep = 0
+        private val timer = ElapsedTime()
+
+        fun reset(): TimedSequence {
+            steps.clear()
+            currentStep = 0
+            timer.reset()
+            return this
+        }
+
+        fun run(action: () -> Unit): TimedSequence {
+            steps += {
+                action()
+                timer.reset()
+                true
+            }
+            return this
+        }
+
+        fun waitFor(ms: Long, action: () -> Unit = {}): TimedSequence {
+            steps += {
+                if (timer.milliseconds() >= ms) {
+                    action()
+                    timer.reset()
+                    true
+                } else {
+                    false
+                }
+            }
+            return this
+        }
+
+        fun update() {
+            if (currentStep < steps.size && steps[currentStep]()) {
+                currentStep++
+            }
+        }
+
+        fun isFinished(): Boolean = currentStep >= steps.size
+    }
 }

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop
 
-import androidx.appcompat.widget.ButtonBarLayout
 import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -20,9 +19,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import java.lang.Thread.sleep
 import kotlin.math.atan2
 
-enum class LiftStates {
-    ZERO, ONE, TWO, THREE
-}
+enum class LiftStates { ZERO, ONE, TWO, THREE }
+
 
 @Configurable
 @TeleOp
@@ -41,6 +39,10 @@ abstract class Inheritable : Subsystems() {
     private var goalTagPose: AprilTagPoseFtc? = null
 
     var targetVelocity: Double = 0.0
+
+    val quickShot = TimedSequence()
+    val colorShot = TimedSequence()
+
 
     val a = Button()
     val b = Button()
@@ -176,10 +178,7 @@ abstract class Inheritable : Subsystems() {
         if (!lifting) return
 
         val targets = intArrayOf(
-            LIFT_STAGE_ONE,
-            LIFT_STAGE_TWO,
-            LIFT_STAGE_THREE,
-            LIFT_STAGE_FOUR
+            LIFT_STAGE_ONE, LIFT_STAGE_TWO, LIFT_STAGE_THREE, LIFT_STAGE_FOUR
         )
 
         leftLift.targetPosition = targets[liftState.ordinal]
@@ -189,8 +188,8 @@ abstract class Inheritable : Subsystems() {
         leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
         rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
 
-        if (liftState.ordinal < targets.lastIndex && !leftLift.isBusy && !rightLift.isBusy)
-            liftState = LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
+        if (liftState.ordinal < targets.lastIndex && !leftLift.isBusy && !rightLift.isBusy) liftState =
+            LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
     }
 
     fun flywheel(button: Button) {
@@ -212,64 +211,49 @@ abstract class Inheritable : Subsystems() {
         plungerBusy = false
     }
 
-    fun colorShot(greenButton: Button, purpleButton: Button) {
-        if (greenButton.`is`(Button.States.TAP) && canShoot) {
-            updateColors()
-            if (frontColor == COLORS.GREEN) {
-                carousel.position = Utility.Constants.BASE
-                sleep(300)
-                plungerMotion()
-            } else if (rightColor == COLORS.GREEN) {
-                carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
-                carousel.position = Utility.Constants.BASE
-            } else if (leftColor == COLORS.GREEN) {
-                carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
-                carousel.position = Utility.Constants.BASE
-            }
+    fun quickShot(button: Button) {
+        if (button.`is`(Button.States.TAP) && canShoot && quickShot.isFinished()) {
+            quickShot.reset()
+                .run { plungerMotion() }
+                .waitFor(300) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
+                .waitFor(600) { plungerMotion() }
+                .waitFor(300) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
+                .waitFor(1000) { plungerMotion() }
+                .waitFor(300) { carousel.position = 0.02 }
         }
-        if (purpleButton.`is`(Button.States.TAP) && canShoot) {
-            updateColors()
-            if (frontColor == COLORS.PURPLE) {
-                carousel.position = Utility.Constants.BASE
-                sleep(300)
-                plungerMotion()
-            } else if (rightColor == COLORS.PURPLE) {
-                carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
-                carousel.position = Utility.Constants.BASE
-            } else if (leftColor == COLORS.PURPLE) {
-                carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-                sleep(300)
-                plungerMotion()
-                sleep(300)
-                carousel.position = Utility.Constants.BASE
-            }
-        }
+
+        quickShot.update()
     }
 
-    fun quickShot(button: Button) {
-        if (button.`is`(Button.States.TAP) && canShoot) {
-            // flywheel
-            plungerMotion()
-            sleep(300)
-            carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL
-            sleep(600)
-            plungerMotion()
-            sleep(300)
-            carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-            sleep(1000)
-            plungerMotion()
-            sleep(300)
-            carousel.position = 0.02
-            // flywheel
+    fun colorShot(green: Button, purple: Button) {
+        if (colorShot.isFinished()) {
+            val color = when {
+                green.`is`(Button.States.TAP) -> COLORS.GREEN
+                purple.`is`(Button.States.TAP) -> COLORS.PURPLE
+                else -> null
+            } ?: return
+
+            updateColors()
+            val target = when {
+                frontColor == color -> Utility.Constants.BASE
+                rightColor == color -> Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                leftColor == color -> Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                else -> return
+            }
+
+            colorShot.reset()
+                .run { carousel.position = target }
+                .waitFor(300) { plungerMotion() }
+                .waitFor(300) { carousel.position = Utility.Constants.BASE }
+        }
+
+        colorShot.update()
+    }
+
+    fun resetShot(button: Button) {
+        if (button.`is`(Button.States.TAP)) {
+            quickShot.reset()
+            colorShot.reset()
         }
     }
 
@@ -304,6 +288,5 @@ abstract class Inheritable : Subsystems() {
         leftTrigger.update(gamepad2.left_trigger > 0.1)
         leftStick.update(gamepad2.left_stick_button)
         rightStick.update(gamepad2.right_stick_button)
-
     }
 }
