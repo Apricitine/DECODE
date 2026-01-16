@@ -15,12 +15,12 @@ open class GoalCompleteBlue : InheritableAuto() {
         "camera" to Pose(34.2, 109.4, Math.toRadians(45.0)),
         "shoot" to Pose(48.0, 96.0, Math.toRadians(135.0)),
         "firstStrike" to Pose(48.0, 84.0, Math.toRadians(180.0)),
-         "getFirstStrike" to Pose(16.0, 84.0, Math.toRadians(180.0)),
-         "secondStrike" to Pose(48.0, 60.0, Math.toRadians(180.0)),
-         "getSecondStrike" to Pose(16.0, 60.0, Math.toRadians(180.0)),
-         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
-         "getThirdStrike" to Pose(16.0, 36.0, Math.toRadians(180.0)),
-         "park" to Pose(48.0, 120.0, Math.toRadians(90.0))
+        "getFirstStrike" to Pose(16.0, 84.0, Math.toRadians(180.0)),
+        "secondStrike" to Pose(48.0, 60.0, Math.toRadians(180.0)),
+        "getSecondStrike" to Pose(16.0, 60.0, Math.toRadians(180.0)),
+        "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
+        "getThirdStrike" to Pose(16.0, 36.0, Math.toRadians(180.0)),
+        "park" to Pose(48.0, 120.0, Math.toRadians(90.0))
     )
 
     object PathChains : PathChain() {

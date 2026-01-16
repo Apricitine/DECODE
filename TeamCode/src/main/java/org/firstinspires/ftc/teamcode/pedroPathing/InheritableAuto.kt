@@ -17,7 +17,6 @@ abstract class InheritableAuto : Subsystems() {
     lateinit var currentPose: Pose
     val runtime = ElapsedTime()
     lateinit var pathTimer: Timer
-    lateinit var actionTimer: Timer
     lateinit var opModeTimer: Timer
 
     var pathState: Int = 0
