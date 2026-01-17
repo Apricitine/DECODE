@@ -39,6 +39,8 @@ open class GoalCompleteBlue : InheritableAuto() {
     }
 
     override fun loop() {
+        super.loop()
+
         robot.update()
         robot.setStartingPose(poses["start"])
         panelsTelemetry.update()

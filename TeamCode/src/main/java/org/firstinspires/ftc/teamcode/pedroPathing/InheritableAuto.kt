@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
-import java.lang.Thread.sleep
 import kotlin.math.PI
 
 abstract class InheritableAuto : Subsystems() {
@@ -20,6 +19,10 @@ abstract class InheritableAuto : Subsystems() {
     lateinit var opModeTimer: Timer
 
     var pathState: Int = 0
+
+    val motifShot = TimedSequence()
+    val colorMotifShot = TimedSequence()
+
 
     override fun init() {
         initializeSubsystems()
@@ -44,8 +47,9 @@ abstract class InheritableAuto : Subsystems() {
         timeSinceLastColorUpdate = ElapsedTime()
     }
 
-    override fun start() {
-
+    override fun loop() {
+        motifShot.update()
+        colorMotifShot.update()
     }
 
     /**
@@ -95,32 +99,34 @@ abstract class InheritableAuto : Subsystems() {
             flywheel.velocity = velocity
         }
 
-        /**
-         * Shoot an artifact in the designated slot.
-         * @param slot The artifact slot to fire from.
-         * @param cooldown Optional. Defaults to true. Specifies whether
-         * to add a 300ms cooldown after the plunger motion.
-         */
-        fun shoot(slot: CarouselStates, cooldown: Boolean = true, startup: Boolean = false) {
-            if (startup) sleep(2000)
-            when (slot) {
-                CarouselStates.FRONT -> carousel.position =
-                    Utility.Constants.DOUBLE_ROTATION_CAROUSEL
-
-                CarouselStates.RIGHT -> carousel.position =
-                    Utility.Constants.SINGLE_ROTATION_CAROUSEL
-
-                CarouselStates.LEFT -> carousel.position = Utility.Constants.BASE
-            }
-            sleep(500)
-            plunger()
-            if (cooldown) sleep(300)
+        fun TimedSequence.plunger(): TimedSequence {
+            run { plunger.position = 0.33 }
+            waitFor(350) { plunger.position = 0.0 }
+            return this
         }
 
-        fun plunger() {
-            plunger.position = 0.33
-            sleep(350)
-            plunger.position = 0.0
+        fun TimedSequence.shoot(
+            slot: CarouselStates,
+            cooldown: Boolean = true,
+            startup: Boolean = false
+        ): TimedSequence {
+
+            if (startup) waitFor(2000)
+
+            run {
+                carousel.position = when (slot) {
+                    CarouselStates.FRONT -> Utility.Constants.DOUBLE_ROTATION_CAROUSEL
+                    CarouselStates.RIGHT -> Utility.Constants.SINGLE_ROTATION_CAROUSEL
+                    CarouselStates.LEFT  -> Utility.Constants.BASE
+                }
+            }
+
+            waitFor(500)
+            plunger()
+
+            if (cooldown) waitFor(300)
+
+            return this
         }
 
         fun intake(power: Double) {
@@ -133,20 +139,17 @@ abstract class InheritableAuto : Subsystems() {
          * Shoots three artifacts according to the detected obelisk state assuming
          * that they are loaded in the GPP sequence.
          */
+
         fun motifShot() {
             if (obeliskState == ObeliskStates.NONE) return
 
             val purple = mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
+            val slots = obeliskState.name.map {
+                if (it == 'G') CarouselStates.FRONT else purple.removeAt(0)
+            }
 
-            obeliskState.name
-                .map { if (it == 'G') CarouselStates.FRONT else purple.removeAt(0) }
-                .forEachIndexed { index, slot ->
-                    shoot(
-                        slot,
-                        index != 2,
-                        index == 0
-                    )
-                }
+            motifShot.reset()
+            slots.forEach { motifShot.shoot(it) }
         }
 
         /**
@@ -161,19 +164,29 @@ abstract class InheritableAuto : Subsystems() {
             val slots = mutableListOf(
                 CarouselStates.FRONT to frontColor,
                 CarouselStates.RIGHT to rightColor,
-                CarouselStates.LEFT to leftColor
+                CarouselStates.LEFT  to leftColor
             )
 
-            obeliskState.name
-                .map { if (it == 'G') COLORS.GREEN else COLORS.PURPLE }
-                .mapNotNull { c ->
-                    slots.firstOrNull { it.second == c }?.also { slots.remove(it) }?.first
-                }
-                .also { list ->
-                    list.forEachIndexed { i, slot ->
-                        shoot(slot, i != list.lastIndex, i == 0)
+            val orderedSlots =
+                obeliskState.name
+                    .map { if (it == 'G') COLORS.GREEN else COLORS.PURPLE }
+                    .mapNotNull { color ->
+                        slots.firstOrNull { it.second == color }
+                            ?.also { slots.remove(it) }
+                            ?.first
                     }
-                }
+
+            if (orderedSlots.isEmpty()) return
+
+            colorMotifShot.reset()
+
+            orderedSlots.forEachIndexed { i, slot ->
+                colorMotifShot.shoot(
+                    slot = slot,
+                    cooldown = i != orderedSlots.lastIndex,
+                    startup = i == 0
+                )
+            }
         }
     }
 

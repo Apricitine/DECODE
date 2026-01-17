@@ -42,7 +42,7 @@ abstract class Inheritable : Subsystems() {
 
     val quickShot = TimedSequence()
     val colorShot = TimedSequence()
-
+    val plungerMotion = TimedSequence()
 
     val a = Button()
     val b = Button()
@@ -102,6 +102,8 @@ abstract class Inheritable : Subsystems() {
         updateButtons()
         robot.update()
         panelsTelemetry.update()
+
+        plungerMotion.update()
     }
 
     fun drive(power: Double) {
@@ -168,7 +170,7 @@ abstract class Inheritable : Subsystems() {
     }
 
     fun plunger(button: Button) {
-        if (button.`is`(Button.States.TAP) && canShoot) {
+        if (button.`is`(Button.States.TAP)) {
             plungerMotion()
         }
     }
@@ -204,11 +206,9 @@ abstract class Inheritable : Subsystems() {
     }
 
     private fun plungerMotion() {
-        plungerBusy = true
-        plunger.position = 0.33
-        sleep(350)
-        plunger.position = 0.0
-        plungerBusy = false
+        plungerMotion.reset()
+            .run { plunger.position = 0.33 }
+            .waitFor(350) { plunger.position = 0.0 }
     }
 
     fun quickShot(button: Button) {
