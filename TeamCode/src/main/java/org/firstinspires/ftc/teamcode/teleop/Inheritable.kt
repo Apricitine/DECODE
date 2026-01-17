@@ -102,7 +102,6 @@ abstract class Inheritable : Subsystems() {
         updateButtons()
         robot.update()
         panelsTelemetry.update()
-
         plungerMotion.update()
     }
 
@@ -206,20 +205,22 @@ abstract class Inheritable : Subsystems() {
     }
 
     private fun plungerMotion() {
+        if (!plungerMotion.isFinished()) return
+
         plungerMotion.reset()
             .run { plunger.position = 0.33 }
             .waitFor(350) { plunger.position = 0.0 }
     }
 
     fun quickShot(button: Button) {
-        if (button.`is`(Button.States.TAP) && canShoot && quickShot.isFinished()) {
+        if (button.`is`(Button.States.TAP) && quickShot.isFinished()) {
             quickShot.reset()
                 .run { plungerMotion() }
-                .waitFor(300) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
+                .waitFor(650) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
                 .waitFor(600) { plungerMotion() }
-                .waitFor(300) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
+                .waitFor(650) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
                 .waitFor(1000) { plungerMotion() }
-                .waitFor(300) { carousel.position = 0.02 }
+                .waitFor(650) { carousel.position = 0.02 }
         }
 
         quickShot.update()
@@ -244,7 +245,7 @@ abstract class Inheritable : Subsystems() {
             colorShot.reset()
                 .run { carousel.position = target }
                 .waitFor(300) { plungerMotion() }
-                .waitFor(300) { carousel.position = Utility.Constants.BASE }
+                .waitFor(650) { carousel.position = Utility.Constants.BASE }
         }
 
         colorShot.update()

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
 @Autonomous(name = "Goal Complete Blue", group = "main")
 open class GoalCompleteBlue : InheritableAuto() {
     val subsystems = Subsystems()
+    var shotSets = 0
 
     open val poses = mapOf(
         "start" to Pose(18.3, 125.6, Math.toRadians(315.0)),
@@ -40,18 +41,8 @@ open class GoalCompleteBlue : InheritableAuto() {
 
     override fun loop() {
         super.loop()
-
-        robot.update()
+        subsystems.flywheel(1100.0)
         robot.setStartingPose(poses["start"])
-        panelsTelemetry.update()
-        currentPose = robot.pose
-
-        pathUpdate()
-
-        log("path state", pathState)
-        log("x", robot.pose.x)
-        log("y", robot.pose.y)
-        log("heading", robot.pose.heading)
     }
 
     override fun buildPathChains() {
@@ -98,10 +89,12 @@ open class GoalCompleteBlue : InheritableAuto() {
             }
 
             2 -> busy {
-                subsystems.flywheel(1100.0)
-                subsystems.motifShot()
-                subsystems.flywheel(0.0)
-                if (pathTimer.elapsedTimeSeconds > 4) {
+                if (shotSets == 0) {
+                    subsystems.motifShot()
+                    shotSets++
+                }
+
+                if (pathTimer.elapsedTimeSeconds > 10) {
                     robot.followPath(PathChains.firstStrike, true)
                     setAndResetPathTimer(3)
                 }
@@ -119,16 +112,16 @@ open class GoalCompleteBlue : InheritableAuto() {
             }
 
             5 -> busy {
-                subsystems.intake(1.0)
-                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootFirstStrike, true)
                 setAndResetPathTimer(6)
             }
 
             6 -> busy {
-                subsystems.flywheel(1100.0)
-                subsystems.colorMotifShot()
-                subsystems.flywheel(0.0)
+                if (shotSets == 1) {
+                    subsystems.motifShot()
+                    shotSets++
+                }
+
                 if (pathTimer.elapsedTimeSeconds > 6) {
                     setAndResetPathTimer(7)
                 }
@@ -146,16 +139,15 @@ open class GoalCompleteBlue : InheritableAuto() {
             }
 
             9 -> busy {
-                subsystems.intake(1.0)
-                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootSecondStrike, true)
                 setAndResetPathTimer(10)
             }
 
             10 -> busy {
-                subsystems.flywheel(1100.0)
-                subsystems.colorMotifShot()
-                subsystems.flywheel(0.0)
+                if (shotSets == 2) {
+                    subsystems.motifShot()
+                    shotSets++
+                }
                 if (pathTimer.elapsedTimeSeconds > 6) {
                     setAndResetPathTimer(11)
                 }
@@ -173,17 +165,16 @@ open class GoalCompleteBlue : InheritableAuto() {
             }
 
             13 -> busy {
-                subsystems.intake(1.0)
-                subsystems.flywheel(1100.0)
                 robot.followPath(PathChains.shootThirdStrike, true)
                 setAndResetPathTimer(14)
             }
 
             14 -> busy {
                 subsystems.intake(0.0)
-                subsystems.flywheel(1100.0)
-                subsystems.colorMotifShot()
-                subsystems.flywheel(0.0)
+                if (shotSets == 3) {
+                    subsystems.colorMotifShot()
+                    shotSets++
+                }
                 if (pathTimer.elapsedTimeSeconds > 6) {
                     setAndResetPathTimer(15)
                 }

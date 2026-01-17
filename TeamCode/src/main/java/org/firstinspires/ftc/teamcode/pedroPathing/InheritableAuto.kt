@@ -6,6 +6,7 @@ import com.pedropathing.paths.PathChain
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
@@ -27,6 +28,9 @@ abstract class InheritableAuto : Subsystems() {
     override fun init() {
         initializeSubsystems()
         initializeProcessor()
+        rightBaseline = calibrate(rightSensor)
+        leftBaseline = calibrate(leftSensor)
+        frontBaseline = calibrate(frontSensor)
 
         robot = Constants.createFollower(hardwareMap)
         buildPathChains()
@@ -43,13 +47,27 @@ abstract class InheritableAuto : Subsystems() {
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel.direction = DcMotorSimple.Direction.REVERSE
+        flywheel.setPIDFCoefficients(
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
+        )
 
         timeSinceLastColorUpdate = ElapsedTime()
     }
 
     override fun loop() {
+        robot.update()
+
         motifShot.update()
         colorMotifShot.update()
+        panelsTelemetry.update()
+        currentPose = robot.pose
+        pathUpdate()
+
+        log("path state", pathState)
+        log("path timer", pathTimer.elapsedTimeSeconds)
+        log("x", robot.pose.x)
+        log("y", robot.pose.y)
+        log("heading", robot.pose.heading)
     }
 
     /**
@@ -107,12 +125,9 @@ abstract class InheritableAuto : Subsystems() {
 
         fun TimedSequence.shoot(
             slot: CarouselStates,
+            startup: Boolean = false,
             cooldown: Boolean = true,
-            startup: Boolean = false
         ): TimedSequence {
-
-            if (startup) waitFor(2000)
-
             run {
                 carousel.position = when (slot) {
                     CarouselStates.FRONT -> Utility.Constants.DOUBLE_ROTATION_CAROUSEL
@@ -120,12 +135,10 @@ abstract class InheritableAuto : Subsystems() {
                     CarouselStates.LEFT  -> Utility.Constants.BASE
                 }
             }
-
-            waitFor(500)
+            if (startup) waitFor(5000)
+            waitFor(300)
             plunger()
-
-            if (cooldown) waitFor(300)
-
+            if (cooldown) waitFor(650)
             return this
         }
 
@@ -139,17 +152,23 @@ abstract class InheritableAuto : Subsystems() {
          * Shoots three artifacts according to the detected obelisk state assuming
          * that they are loaded in the GPP sequence.
          */
-
         fun motifShot() {
             if (obeliskState == ObeliskStates.NONE) return
-
+            if (!motifShot.isFinished()) return
             val purple = mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
             val slots = obeliskState.name.map {
                 if (it == 'G') CarouselStates.FRONT else purple.removeAt(0)
             }
 
             motifShot.reset()
-            slots.forEach { motifShot.shoot(it) }
+            slots.forEachIndexed { i, slot ->
+                log("shooting", slot)
+                motifShot.shoot(
+                    slot = slot,
+                    startup = i == 0,
+                    cooldown = i != slots.lastIndex
+                )
+            }
         }
 
         /**
@@ -159,6 +178,7 @@ abstract class InheritableAuto : Subsystems() {
          */
         fun colorMotifShot() {
             updateColors()
+            if (!colorMotifShot.isFinished()) return
             if (obeliskState == ObeliskStates.NONE) return
 
             val slots = mutableListOf(
@@ -179,12 +199,10 @@ abstract class InheritableAuto : Subsystems() {
             if (orderedSlots.isEmpty()) return
 
             colorMotifShot.reset()
-
             orderedSlots.forEachIndexed { i, slot ->
                 colorMotifShot.shoot(
                     slot = slot,
                     cooldown = i != orderedSlots.lastIndex,
-                    startup = i == 0
                 )
             }
         }
