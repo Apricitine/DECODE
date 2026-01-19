@@ -135,7 +135,7 @@ abstract class InheritableAuto : Subsystems() {
                     CarouselStates.LEFT  -> Utility.Constants.BASE
                 }
             }
-            if (startup) waitFor(5000)
+            if (startup) waitFor(2000)
             waitFor(300)
             plunger()
             if (cooldown) waitFor(650)
@@ -165,8 +165,7 @@ abstract class InheritableAuto : Subsystems() {
                 log("shooting", slot)
                 motifShot.shoot(
                     slot = slot,
-                    startup = i == 0,
-                    cooldown = i != slots.lastIndex
+                    startup = i == 0
                 )
             }
         }

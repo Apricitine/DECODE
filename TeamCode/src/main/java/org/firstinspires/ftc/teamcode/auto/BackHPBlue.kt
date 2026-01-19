@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
 
 @Autonomous(name = "Goal Complete Blue", group = "main")
-open class GoalCompleteBlue : InheritableAuto() {
+open class BackHPBlue : InheritableAuto() {
     val subsystems = Subsystems()
     var shotSets = 0
 
