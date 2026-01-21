@@ -43,6 +43,8 @@ open class GoalCompleteBlue : InheritableAuto() {
         super.loop()
         subsystems.flywheel(1000.0)
         robot.setStartingPose(poses["start"])
+
+        log("time", motifShot.timer)
     }
 
     override fun buildPathChains() {

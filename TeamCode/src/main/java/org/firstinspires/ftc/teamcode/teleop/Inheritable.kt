@@ -95,6 +95,7 @@ abstract class Inheritable : Subsystems() {
 
         flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel.direction = DcMotorSimple.Direction.REVERSE
+        flywheel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
     override fun loop() {
@@ -217,9 +218,9 @@ abstract class Inheritable : Subsystems() {
             quickShot.reset()
                 .run { plungerMotion() }
                 .waitFor(650) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
-                .waitFor(600) { plungerMotion() }
+                .waitFor(400) { plungerMotion() }
                 .waitFor(650) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
-                .waitFor(1000) { plungerMotion() }
+                .waitFor(400) { plungerMotion() }
                 .waitFor(650) { carousel.position = 0.02 }
         }
 

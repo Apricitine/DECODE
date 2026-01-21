@@ -34,12 +34,12 @@ class Utility {
     class Constants {
 
         companion object {
-            const val BASE: Double = 0.019
-            const val SINGLE_ROTATION_CAROUSEL: Double = 0.395
-            const val DOUBLE_ROTATION_CAROUSEL: Double = 0.775
+            const val BASE: Double = 0.024
+            const val SINGLE_ROTATION_CAROUSEL: Double = 0.3975
+            const val DOUBLE_ROTATION_CAROUSEL: Double = 0.78
 
             const val TICKS_PER_SECOND_PER_INCH: Double = 4.47114
-            const val MIN_TICKS_PER_SECOND: Double = 800.0
+            const val MIN_TICKS_PER_SECOND: Double = 780.0
 
             const val LIFT_STAGE_ZERO: Int = 0
             const val LIFT_STAGE_ONE: Int = 450

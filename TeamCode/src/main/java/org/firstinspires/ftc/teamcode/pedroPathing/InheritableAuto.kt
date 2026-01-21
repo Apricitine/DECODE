@@ -132,13 +132,12 @@ abstract class InheritableAuto : Subsystems() {
                 carousel.position = when (slot) {
                     CarouselStates.FRONT -> Utility.Constants.DOUBLE_ROTATION_CAROUSEL
                     CarouselStates.RIGHT -> Utility.Constants.SINGLE_ROTATION_CAROUSEL
-                    CarouselStates.LEFT  -> Utility.Constants.BASE
+                    CarouselStates.LEFT -> Utility.Constants.BASE
                 }
             }
-            if (startup) waitFor(2000)
-            waitFor(300)
-            plunger()
-            if (cooldown) waitFor(650)
+            if (startup) waitFor(1000)
+            waitFor(300) { plunger() }
+            if (cooldown) waitFor(750)
             return this
         }
 
@@ -149,15 +148,33 @@ abstract class InheritableAuto : Subsystems() {
         }
 
         /**
-         * Shoots three artifacts according to the detected obelisk state assuming
-         * that they are loaded in the GPP sequence.
+         * Shoots three artifacts according to the detected obelisk state given a specified order
+         * in which they are loaded.
+         * @param loadOrder The order in which they are loaded, given in enum type ObeliskStates.
+         * The load order is the front artifact, then right artifact, and then left artifact
          */
-        fun motifShot() {
+        fun motifShot(loadOrder: ObeliskStates = ObeliskStates.GPP) {
             if (obeliskState == ObeliskStates.NONE) return
             if (!motifShot.isFinished()) return
-            val purple = mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
+            val purple = when (loadOrder) {
+                ObeliskStates.GPP -> mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
+                ObeliskStates.PGP -> mutableListOf(CarouselStates.FRONT, CarouselStates.RIGHT)
+                ObeliskStates.PPG -> mutableListOf(CarouselStates.FRONT, CarouselStates.RIGHT)
+                else -> throw(Throwable("ur stupid wtf"))
+            }
+
+            require(purple.size == obeliskState.name.count { it == 'P' }) {
+                "Purple count mismatch: purple=${purple.size}, detected=${obeliskState}"
+            }
+
             val slots = obeliskState.name.map {
-                if (it == 'G') CarouselStates.FRONT else purple.removeAt(0)
+                if (loadOrder == ObeliskStates.GPP) {
+                    if (it == 'G') CarouselStates.FRONT else purple.removeAt(0)
+                } else if (loadOrder == ObeliskStates.PGP) {
+                    if (it == 'G') CarouselStates.LEFT else purple.removeAt(0)
+                } else {
+                    if (it == 'G') CarouselStates.LEFT else purple.removeAt(0)
+                }
             }
 
             motifShot.reset()
@@ -165,7 +182,7 @@ abstract class InheritableAuto : Subsystems() {
                 log("shooting", slot)
                 motifShot.shoot(
                     slot = slot,
-                    startup = i == 0
+                    startup = i == 0,
                 )
             }
         }
@@ -183,7 +200,7 @@ abstract class InheritableAuto : Subsystems() {
             val slots = mutableListOf(
                 CarouselStates.FRONT to frontColor,
                 CarouselStates.RIGHT to rightColor,
-                CarouselStates.LEFT  to leftColor
+                CarouselStates.LEFT to leftColor
             )
 
             val orderedSlots =

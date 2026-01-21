@@ -77,6 +77,8 @@ abstract class Subsystems : OpMode() {
         leftSensor = hardwareMap.get(NormalizedColorSensor::class.java, "leftSensor")
 
         panelsTelemetry = PanelsTelemetry.telemetry
+
+        telemetry.msTransmissionInterval = 50
     }
 
     /**
@@ -188,7 +190,7 @@ abstract class Subsystems : OpMode() {
 
         private val steps = mutableListOf<() -> Boolean>()
         private var currentStep = 0
-        private val timer = ElapsedTime()
+        val timer = ElapsedTime()
 
         fun reset(): TimedSequence {
             steps.clear()
