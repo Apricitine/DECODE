@@ -12,8 +12,8 @@ open class GoalCompleteBlue : InheritableAuto() {
     var shotSets = 0
 
     open val poses = mapOf(
-        "start" to Pose(18.3, 125.6, Math.toRadians(315.0)),
-        "camera" to Pose(34.2, 109.4, Math.toRadians(45.0)),
+        "start" to Pose(21.0, 123.0, Math.toRadians(315.0)),
+        "camera" to Pose(36.0, 108.0, Math.toRadians(45.0)),
         "shoot" to Pose(48.0, 96.0, Math.toRadians(135.0)),
         "firstStrike" to Pose(48.0, 84.0, Math.toRadians(180.0)),
         "getFirstStrike" to Pose(16.0, 84.0, Math.toRadians(180.0)),

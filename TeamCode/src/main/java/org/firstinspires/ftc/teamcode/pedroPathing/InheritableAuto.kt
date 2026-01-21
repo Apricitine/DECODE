@@ -119,14 +119,14 @@ abstract class InheritableAuto : Subsystems() {
 
         fun TimedSequence.plunger(): TimedSequence {
             run { plunger.position = 0.33 }
-            waitFor(350) { plunger.position = 0.0 }
+            waitFor(350)
+            run { plunger.position = 0.0 }
             return this
         }
 
         fun TimedSequence.shoot(
             slot: CarouselStates,
             startup: Boolean = false,
-            cooldown: Boolean = true,
         ): TimedSequence {
             run {
                 carousel.position = when (slot) {
@@ -135,9 +135,9 @@ abstract class InheritableAuto : Subsystems() {
                     CarouselStates.LEFT -> Utility.Constants.BASE
                 }
             }
-            if (startup) waitFor(1000)
-            waitFor(300) { plunger() }
-            if (cooldown) waitFor(750)
+            waitFor(if (startup) 1000 else 500)
+            plunger()
+            waitFor(750)
             return this
         }
 
@@ -218,7 +218,6 @@ abstract class InheritableAuto : Subsystems() {
             orderedSlots.forEachIndexed { i, slot ->
                 colorMotifShot.shoot(
                     slot = slot,
-                    cooldown = i != orderedSlots.lastIndex,
                 )
             }
         }
