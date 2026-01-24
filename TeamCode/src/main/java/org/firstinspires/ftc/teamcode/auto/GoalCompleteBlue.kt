@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto
 
+import com.pedropathing.geometry.BezierCurve
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
 import com.pedropathing.paths.PathChain
@@ -16,9 +17,10 @@ open class GoalCompleteBlue : InheritableAuto() {
         "camera" to Pose(36.0, 108.0, Math.toRadians(45.0)),
         "shoot" to Pose(48.0, 96.0, Math.toRadians(135.0)),
         "firstStrike" to Pose(48.0, 84.0, Math.toRadians(180.0)),
-        "getFirstStrike" to Pose(16.0, 84.0, Math.toRadians(180.0)),
-        "secondStrike" to Pose(48.0, 60.0, Math.toRadians(180.0)),
-        "getSecondStrike" to Pose(16.0, 60.0, Math.toRadians(180.0)),
+        "getFirstStrike" to Pose(24.0, 84.0, Math.toRadians(180.0)),
+        "secondStrike" to Pose(48.0, 58.0, Math.toRadians(180.0)),
+        "getSecondStrike" to Pose(20.0, 58.0, Math.toRadians(180.0)),
+        "controlDriftOut" to Pose(48.0, 57.0, Math.toRadians(0.0)),
         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
         "getThirdStrike" to Pose(16.0, 36.0, Math.toRadians(180.0)),
         "park" to Pose(48.0, 120.0, Math.toRadians(90.0))
@@ -41,7 +43,7 @@ open class GoalCompleteBlue : InheritableAuto() {
 
     override fun loop() {
         super.loop()
-        subsystems.flywheel(1000.0)
+        subsystems.flywheel(950.0)
         robot.setStartingPose(poses["start"])
 
         log("time", motifShot.timer)
@@ -64,7 +66,12 @@ open class GoalCompleteBlue : InheritableAuto() {
             robot.pathBuilder()
                 .addPath(BezierLine(poses["secondStrike"], poses["getSecondStrike"]))
                 .build()
-        PathChains.shootSecondStrike = linearPathChain(poses["getSecondStrike"], poses["shoot"])
+        PathChains.shootSecondStrike =
+            robot.pathBuilder()
+                .addPath(
+                    BezierCurve(poses["getSecondStrike"], poses["controlDriftOut"], poses["shoot"])
+                ).setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(135.0))
+                .build()
         PathChains.thirdStrike =
             linearPathChain(poses["shoot"], poses["thirdStrike"])
         PathChains.getThirdStrike =
@@ -96,7 +103,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     shotSets++
                 }
 
-                if (pathTimer.elapsedTimeSeconds > 8) {
+                if (pathTimer.elapsedTimeSeconds > 6) {
                     robot.followPath(PathChains.firstStrike, true)
                     setAndResetPathTimer(3)
                 }
@@ -124,7 +131,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     shotSets++
                 }
 
-                if (pathTimer.elapsedTimeSeconds > 7) {
+                if (pathTimer.elapsedTimeSeconds > 6) {
                     setAndResetPathTimer(7)
                 }
             }

@@ -127,6 +127,7 @@ abstract class InheritableAuto : Subsystems() {
         fun TimedSequence.shoot(
             slot: CarouselStates,
             startup: Boolean = false,
+            cooldown: Boolean = true
         ): TimedSequence {
             run {
                 carousel.position = when (slot) {
@@ -137,7 +138,7 @@ abstract class InheritableAuto : Subsystems() {
             }
             waitFor(if (startup) 1000 else 500)
             plunger()
-            waitFor(750)
+            if (cooldown) waitFor(300)
             return this
         }
 
@@ -183,6 +184,7 @@ abstract class InheritableAuto : Subsystems() {
                 motifShot.shoot(
                     slot = slot,
                     startup = i == 0,
+                    cooldown = i != slots.size
                 )
             }
         }

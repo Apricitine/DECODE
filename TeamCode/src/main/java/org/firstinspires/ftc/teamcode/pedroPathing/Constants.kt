@@ -33,9 +33,9 @@ class Constants {
                 .strafeTicksToInches(.001989436789)
                 .turnTicksToInches(.001989436789)
                 /* these are solid */
-                .leftPodY(3.125)
-                .rightPodY(-3.125)
-                .strafePodX(-4.25)
+                .leftPodY(4.75)
+                .rightPodY(-4.75)
+                .strafePodX(-3.25)
                 .leftEncoder_HardwareMapName("leftFront")
                 .rightEncoder_HardwareMapName("rightFront")
                 .strafeEncoder_HardwareMapName("rightRear")
