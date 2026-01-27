@@ -263,22 +263,16 @@ abstract class Inheritable : Subsystems() {
 
     fun alignTurnOnly(power: Double = 1.0) {
         val tag = goalTagPose ?: return
-
-        // Angle error (radians)
         val headingError = atan2(tag.x, tag.y)
-
-        // Simple P controller
-        val turn = (headingError * TURN_KP)
-            .coerceIn(-MAX_TURN, MAX_TURN)
+        val turn = (headingError * TURN_KP).coerceIn(-MAX_TURN, MAX_TURN)
 
         robot.setTeleOpDrive(
-            -gamepad1.left_stick_y * power,  // driver keeps forward/back
-            -gamepad1.left_stick_x * power,  // driver keeps strafe
-            turn,                    // auto-aim rotation
+            -gamepad1.left_stick_y * power,
+            -gamepad1.left_stick_x * power,
+            turn,
             true
         )
 
-        // Finish condition
         if (kotlin.math.abs(headingError) < ALIGN_ANGLE_TOL) {
             robot.startTeleopDrive()
             aligning = false
