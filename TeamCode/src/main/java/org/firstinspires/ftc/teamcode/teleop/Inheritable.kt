@@ -25,6 +25,10 @@ enum class LiftStates { ZERO, ONE, TWO, THREE }
 @Configurable
 @TeleOp
 abstract class Inheritable : Subsystems() {
+    private val TURN_KP = 1.0
+    private val MAX_TURN = 0.6
+    private val ALIGN_ANGLE_TOL = Math.toRadians(1.5)
+
     protected var carouselState: CarouselStates = CarouselStates.FRONT
     private var intakeRunning: Boolean = false
     private var intakeReverseRunning: Boolean = false
@@ -117,13 +121,11 @@ abstract class Inheritable : Subsystems() {
         }
 
         if (a1.`is`(Button.States.TAP)) {
-            align()
-            aligning = true
+            aligning = !aligning
         }
 
-        if (aligning && (a1.`is`(Button.States.TAP) || !robot.isBusy)) {
-            robot.startTeleopDrive()
-            aligning = false
+        if (aligning) {
+            alignTurnOnly()
         }
     }
 
@@ -259,9 +261,27 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun align() {
-        goalTagPose?.let {
-            robot.turn(atan2(it.x, it.y), false)
+    fun alignTurnOnly(power: Double = 1.0) {
+        val tag = goalTagPose ?: return
+
+        // Angle error (radians)
+        val headingError = atan2(tag.x, tag.y)
+
+        // Simple P controller
+        val turn = (headingError * TURN_KP)
+            .coerceIn(-MAX_TURN, MAX_TURN)
+
+        robot.setTeleOpDrive(
+            -gamepad1.left_stick_y * power,  // driver keeps forward/back
+            -gamepad1.left_stick_x * power,  // driver keeps strafe
+            turn,                    // auto-aim rotation
+            true
+        )
+
+        // Finish condition
+        if (kotlin.math.abs(headingError) < ALIGN_ANGLE_TOL) {
+            robot.startTeleopDrive()
+            aligning = false
         }
     }
 
