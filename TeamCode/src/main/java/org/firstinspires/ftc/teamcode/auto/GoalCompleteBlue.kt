@@ -91,10 +91,7 @@ open class GoalCompleteBlue : InheritableAuto() {
 
             1 -> busy {
                 obeliskTag()
-                if (pathTimer.elapsedTimeSeconds > 2) {
-                    robot.followPath(PathChains.shootPreload, true)
-                    setAndResetPathTimer(2)
-                }
+                geedadee(2, 2) { robot.followPath(PathChains.shootPreload, true) }
             }
 
             2 -> busy {
@@ -103,10 +100,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     shotSets++
                 }
 
-                if (pathTimer.elapsedTimeSeconds > 6) {
-                    robot.followPath(PathChains.firstStrike, true)
-                    setAndResetPathTimer(3)
-                }
+                geedadee(6, 3) { robot.followPath(PathChains.firstStrike, true) }
             }
 
             3 -> busy {
@@ -131,9 +125,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     shotSets++
                 }
 
-                if (pathTimer.elapsedTimeSeconds > 6) {
-                    setAndResetPathTimer(7)
-                }
+                geedadee(6, 7)
             }
 
             7 -> busy {
@@ -157,9 +149,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     subsystems.motifShot()
                     shotSets++
                 }
-                if (pathTimer.elapsedTimeSeconds > 6) {
-                    setAndResetPathTimer(11)
-                }
+                geedadee(6, 11)
             }
 
             11 -> busy {
@@ -184,9 +174,7 @@ open class GoalCompleteBlue : InheritableAuto() {
                     subsystems.colorMotifShot()
                     shotSets++
                 }
-                if (pathTimer.elapsedTimeSeconds > 6) {
-                    setAndResetPathTimer(15)
-                }
+                geedadee(6, 15)
             }
 
             15 -> {

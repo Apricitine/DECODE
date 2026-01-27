@@ -235,6 +235,13 @@ abstract class InheritableAuto : Subsystems() {
         }
     }
 
+    fun geedadee(time: Int, state: Int? = null, call: (() -> Unit)?= null) {
+        if (pathTimer.elapsedTimeSeconds > time) {
+            if (state != null) setAndResetPathTimer(state)
+            call?.invoke()
+        }
+    }
+
     /**
      * Sets the path state to a given integer state and resets the path timer.
      * @param state The integer state to set pathState to.

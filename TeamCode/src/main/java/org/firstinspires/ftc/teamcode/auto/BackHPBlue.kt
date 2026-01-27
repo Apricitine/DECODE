@@ -35,7 +35,7 @@ open class BackHPBlue : InheritableAuto() {
 
     override fun loop() {
         super.loop()
-        subsystems.flywheel(1000.0)
+        subsystems.flywheel(1100.0)
         robot.setStartingPose(poses["start"])
     }
 
@@ -57,5 +57,24 @@ open class BackHPBlue : InheritableAuto() {
         PathChains.park = linearPathChain(poses["shootHP"], poses["park"])
     }
 
-    override fun pathUpdate() {}
+    override fun pathUpdate() {
+        when (pathState) {
+            0 -> {
+                obeliskTag()
+                geedadee(2, 1)
+            }
+
+            1 -> {
+                robot.followPath(PathChains.shootPreload)
+                geedadee(2, 2)
+            }
+            2 -> {
+                subsystems.motifShot()
+                geedadee(7, 3)
+            }
+            3 -> {
+                robot.followPath(PathChains.thirdStrike)
+            }
+        }
+    }
 }
