@@ -103,7 +103,6 @@ abstract class Inheritable : Subsystems() {
     }
 
     override fun loop() {
-        updateTagPose()
         updateButtons()
         robot.update()
         panelsTelemetry.update()
@@ -264,7 +263,9 @@ abstract class Inheritable : Subsystems() {
     fun alignTurnOnly(power: Double = 1.0) {
         val tag = goalTagPose ?: return
         val headingError = atan2(tag.x, tag.y)
-        val turn = (headingError * TURN_KP).coerceIn(-MAX_TURN, MAX_TURN)
+        val turn = (-headingError * TURN_KP).coerceIn(-MAX_TURN, MAX_TURN)
+
+        log("turn distance", turn)
 
         robot.setTeleOpDrive(
             -gamepad1.left_stick_y * power,
@@ -282,6 +283,12 @@ abstract class Inheritable : Subsystems() {
     fun updateTagPose() {
         goalTagPose = processor.detections.firstOrNull {
             it.metadata != null && it.id !in 21..23
+        }?.ftcPose
+    }
+
+    fun updateTagPoseAlliance(tag: Int) {
+        goalTagPose = processor.detections.firstOrNull {
+            it.metadata != null && it.id == tag
         }?.ftcPose
     }
 

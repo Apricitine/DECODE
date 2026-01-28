@@ -111,7 +111,7 @@ open class GoalCompleteBlue : InheritableAuto() {
             4 -> busy {
                 subsystems.intake(1.0)
                 robot.followPath(PathChains.getFirstStrike, 0.5, true)
-                setAndResetPathTimer(5)
+                geedadee(3, 5)
             }
 
             5 -> busy {

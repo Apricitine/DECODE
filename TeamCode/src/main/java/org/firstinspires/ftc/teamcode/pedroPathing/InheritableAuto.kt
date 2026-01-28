@@ -24,7 +24,6 @@ abstract class InheritableAuto : Subsystems() {
     val motifShot = TimedSequence()
     val colorMotifShot = TimedSequence()
 
-
     override fun init() {
         initializeSubsystems()
         initializeProcessor()

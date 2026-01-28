@@ -30,15 +30,15 @@ class Constants {
             ThreeWheelIMUConstants()
                 /* these need to be determined */
                 .forwardTicksToInches(.001989436789)
-                .strafeTicksToInches(.001989436789)
+                .strafeTicksToInches(.00298415518)
                 .turnTicksToInches(.001989436789)
                 /* these are solid */
                 .leftPodY(4.75)
                 .rightPodY(-4.75)
                 .strafePodX(-3.25)
-                .leftEncoder_HardwareMapName("leftFront")
+                .leftEncoder_HardwareMapName("rightRear")
                 .rightEncoder_HardwareMapName("rightFront")
-                .strafeEncoder_HardwareMapName("rightRear")
+                .strafeEncoder_HardwareMapName("leftFront")
                 /* these need to be determined */
                 .leftEncoderDirection(Encoder.REVERSE)
                 .rightEncoderDirection(Encoder.REVERSE)

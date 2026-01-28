@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
-@TeleOp(name = "Drive", group = "Main")
-class Drive : Inheritable() {
+@TeleOp(name = "Blue Drive", group = "Main")
+class BlueDrive : Inheritable() {
     override fun loop() {
         super.loop()
+
+        updateTagPoseAlliance(20)
 
         drive(1.0)
         intake(rightBumper, leftBumper)
@@ -33,6 +35,5 @@ class Drive : Inheritable() {
         log("| can we shoot?", if (canShoot) "YES" else "NO")
 
         log("\nlifting?", lifting)
-
     }
 }
