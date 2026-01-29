@@ -13,7 +13,7 @@ open class BackHPBlue : InheritableAuto() {
 
     open val poses = mapOf(
         "start" to Pose(60.0, 9.0, Math.toRadians(90.0)),
-        "shootPreload" to Pose(60.0, 18.0, Math.toRadians(106.0)),
+        "shootPreload" to Pose(60.0, 18.0, Math.toRadians(112.0)),
         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
         "getThirdStrike" to Pose(12.0, 36.0, Math.toRadians(180.0)),
         "shootThirdStrike" to Pose(66.0, 12.0, Math.toRadians(106.0)),
@@ -35,7 +35,7 @@ open class BackHPBlue : InheritableAuto() {
 
     override fun loop() {
         super.loop()
-        subsystems.flywheel(1100.0)
+        subsystems.flywheel(1350.0)
         robot.setStartingPose(poses["start"])
     }
 
@@ -43,7 +43,11 @@ open class BackHPBlue : InheritableAuto() {
         PathChains.shootPreload =
             linearPathChain(poses["start"], poses["shootPreload"])
         PathChains.thirdStrike =
-            linearPathChain(poses["shootPreload"], poses["thirdStrike"])
+            robot.pathBuilder().addPath(BezierLine(poses["shootPreload"], poses["thirdStrike"]))
+                .setLinearHeadingInterpolation(
+                    poses["shootPreload"]!!.heading,
+                    poses["thirdStrike"]!!.heading
+                ).build()
         PathChains.getThirdStrike =
             robot.pathBuilder().addPath(BezierLine(poses["thirdStrike"], poses["getThirdStrike"]))
                 .build()
@@ -61,19 +65,41 @@ open class BackHPBlue : InheritableAuto() {
         when (pathState) {
             0 -> {
                 obeliskTag()
-                geedadee(2, 1)
+                geedadee(2, 1) { robot.followPath(PathChains.shootPreload, true) }
             }
 
             1 -> {
-                robot.followPath(PathChains.shootPreload)
-                geedadee(2, 2)
+                if (shotSets == 0) {
+                    subsystems.motifShot()
+                    shotSets++
+                }
+
+                geedadee(6, 2) { robot.followPath(PathChains.thirdStrike, true) }
             }
+
             2 -> {
-                subsystems.motifShot()
-                geedadee(7, 3)
+                subsystems.intake(1.0)
+                robot.followPath(PathChains.getThirdStrike, true)
+                geedadee(2, 3)
             }
-            3 -> {
-                robot.followPath(PathChains.thirdStrike)
+
+            4 -> {
+                subsystems.intake(1.0)
+                robot.followPath(PathChains.getThirdStrike, true)
+                geedadee(3, 5)
+            }
+
+            5 -> {
+                subsystems.intake(0.0)
+                robot.followPath(PathChains.shootThirdStrike, true)
+                setAndResetPathTimer(6)
+            }
+
+            6 -> {
+                if (shotSets == 1) {
+                    subsystems.motifShot(ObeliskStates.PPG)
+                    shotSets++
+                }
             }
         }
     }

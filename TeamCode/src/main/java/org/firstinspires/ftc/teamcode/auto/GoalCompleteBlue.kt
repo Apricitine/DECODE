@@ -19,7 +19,7 @@ open class GoalCompleteBlue : InheritableAuto() {
         "firstStrike" to Pose(48.0, 84.0, Math.toRadians(180.0)),
         "getFirstStrike" to Pose(24.0, 84.0, Math.toRadians(180.0)),
         "secondStrike" to Pose(48.0, 58.0, Math.toRadians(180.0)),
-        "getSecondStrike" to Pose(20.0, 58.0, Math.toRadians(180.0)),
+        "getSecondStrike" to Pose(18.0, 58.0, Math.toRadians(180.0)),
         "controlDriftOut" to Pose(48.0, 57.0, Math.toRadians(0.0)),
         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
         "getThirdStrike" to Pose(16.0, 36.0, Math.toRadians(180.0)),
@@ -70,7 +70,7 @@ open class GoalCompleteBlue : InheritableAuto() {
             robot.pathBuilder()
                 .addPath(
                     BezierCurve(poses["getSecondStrike"], poses["controlDriftOut"], poses["shoot"])
-                ).setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(135.0))
+                ).setLinearHeadingInterpolation(poses["getSecondStrike"]!!.heading, poses["shoot"]!!.heading)
                 .build()
         PathChains.thirdStrike =
             linearPathChain(poses["shoot"], poses["thirdStrike"])
@@ -111,7 +111,7 @@ open class GoalCompleteBlue : InheritableAuto() {
             4 -> busy {
                 subsystems.intake(1.0)
                 robot.followPath(PathChains.getFirstStrike, 0.5, true)
-                geedadee(3, 5)
+                geedadee(2, 5)
             }
 
             5 -> busy {
@@ -136,7 +136,7 @@ open class GoalCompleteBlue : InheritableAuto() {
             8 -> busy {
                 subsystems.intake(1.0)
                 robot.followPath(PathChains.getSecondStrike, 0.5, true)
-                setAndResetPathTimer(9)
+                geedadee(3, 9)
             }
 
             9 -> busy {
