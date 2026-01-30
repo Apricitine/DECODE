@@ -67,6 +67,7 @@ abstract class InheritableAuto : Subsystems() {
         log("x", robot.pose.x)
         log("y", robot.pose.y)
         log("heading", robot.pose.heading)
+        log("obeliskState", obeliskState)
     }
 
     /**

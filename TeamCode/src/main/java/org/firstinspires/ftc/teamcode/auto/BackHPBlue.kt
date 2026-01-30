@@ -10,15 +10,16 @@ import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
 open class BackHPBlue : InheritableAuto() {
     val subsystems = Subsystems()
     var shotSets = 0
+    var reset = false
 
     open val poses = mapOf(
         "start" to Pose(60.0, 9.0, Math.toRadians(90.0)),
-        "shootPreload" to Pose(60.0, 18.0, Math.toRadians(112.0)),
+        "shootPreload" to Pose(58.0, 18.0, Math.toRadians(112.0)),
         "thirdStrike" to Pose(48.0, 36.0, Math.toRadians(180.0)),
-        "getThirdStrike" to Pose(12.0, 36.0, Math.toRadians(180.0)),
-        "shootThirdStrike" to Pose(66.0, 12.0, Math.toRadians(106.0)),
+        "getThirdStrike" to Pose(18.0, 36.0, Math.toRadians(180.0)),
+        "shootThirdStrike" to Pose(58.0, 18.0, Math.toRadians(112.0)),
         "getHP" to Pose(12.0, 12.0, Math.toRadians(180.0)),
-        "shootHP" to Pose(66.0, 18.0, Math.toRadians(106.0)),
+        "shootHP" to Pose(58.0, 18.0, Math.toRadians(112.0)),
         "park" to Pose(36.0, 36.0, Math.toRadians(90.0))
     )
 
@@ -35,7 +36,7 @@ open class BackHPBlue : InheritableAuto() {
 
     override fun loop() {
         super.loop()
-        subsystems.flywheel(1350.0)
+        subsystems.flywheel(1225.0)
         robot.setStartingPose(poses["start"])
     }
 
@@ -63,44 +64,81 @@ open class BackHPBlue : InheritableAuto() {
 
     override fun pathUpdate() {
         when (pathState) {
-            0 -> {
+            0 -> busy {
+                if (!reset) {
+                    setAndResetPathTimer(0)
+                    reset = !reset
+                }
                 obeliskTag()
-                geedadee(2, 1) { robot.followPath(PathChains.shootPreload, true) }
+                if (pathTimer.elapsedTimeSeconds > 4) {
+                    robot.followPath(PathChains.shootPreload, true)
+                    setAndResetPathTimer(1)
+                }
             }
 
-            1 -> {
+            1 -> busy {
                 if (shotSets == 0) {
                     subsystems.motifShot()
                     shotSets++
                 }
 
-                geedadee(6, 2) { robot.followPath(PathChains.thirdStrike, true) }
+                if (pathTimer.elapsedTimeSeconds > 6) {
+                    robot.followPath(PathChains.thirdStrike, true)
+                    setAndResetPathTimer(2)
+                }
             }
 
-            2 -> {
+            2 -> busy {
                 subsystems.intake(1.0)
-                robot.followPath(PathChains.getThirdStrike, true)
-                geedadee(2, 3)
+                robot.followPath(PathChains.getThirdStrike, 0.5, true)
+                if (pathTimer.elapsedTimeSeconds > 3) {
+                    robot.followPath(PathChains.getThirdStrike, 0.5, true)
+                    setAndResetPathTimer(3)
+                }
             }
 
-            4 -> {
+            3 -> busy {
                 subsystems.intake(1.0)
-                robot.followPath(PathChains.getThirdStrike, true)
-                geedadee(3, 5)
-            }
-
-            5 -> {
-                subsystems.intake(0.0)
                 robot.followPath(PathChains.shootThirdStrike, true)
-                setAndResetPathTimer(6)
+                setAndResetPathTimer(4)
             }
 
-            6 -> {
+            4 -> busy {
                 if (shotSets == 1) {
                     subsystems.motifShot(ObeliskStates.PPG)
                     shotSets++
                 }
+
+                if (pathTimer.elapsedTimeSeconds > 6) {
+                    subsystems.intake(1.0)
+                    robot.followPath(PathChains.getHP, 0.5, true)
+                    setAndResetPathTimer(5)
+                }
             }
+
+            5 -> busy {
+                subsystems.intake(1.0)
+                robot.followPath(PathChains.getHP, true)
+                setAndResetPathTimer(6)
+            }
+
+            6 -> busy {
+                subsystems.intake(1.0)
+                robot.followPath(PathChains.shootHP, true)
+                setAndResetPathTimer(7)
+            }
+
+            7 -> busy {
+                if (shotSets == 2) {
+                    subsystems.motifShot()
+                    shotSets++
+                }
+
+                if (pathTimer.elapsedTimeSeconds > 6) {
+                    robot.followPath(PathChains.park, true)
+                }
+            }
+
         }
     }
 }
