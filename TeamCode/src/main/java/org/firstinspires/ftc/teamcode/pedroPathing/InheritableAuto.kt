@@ -159,7 +159,7 @@ abstract class InheritableAuto : Subsystems() {
             if (!motifShot.isFinished()) return
             val purple = when (loadOrder) {
                 ObeliskStates.GPP -> mutableListOf(CarouselStates.RIGHT, CarouselStates.LEFT)
-                ObeliskStates.PGP -> mutableListOf(CarouselStates.FRONT, CarouselStates.RIGHT)
+                ObeliskStates.PGP -> mutableListOf(CarouselStates.FRONT, CarouselStates.LEFT)
                 ObeliskStates.PPG -> mutableListOf(CarouselStates.FRONT, CarouselStates.RIGHT)
                 else -> throw(Throwable("ur stupid wtf"))
             }
@@ -172,7 +172,7 @@ abstract class InheritableAuto : Subsystems() {
                 if (loadOrder == ObeliskStates.GPP) {
                     if (it == 'G') CarouselStates.FRONT else purple.removeAt(0)
                 } else if (loadOrder == ObeliskStates.PGP) {
-                    if (it == 'G') CarouselStates.LEFT else purple.removeAt(0)
+                    if (it == 'G') CarouselStates.RIGHT else purple.removeAt(0)
                 } else {
                     if (it == 'G') CarouselStates.LEFT else purple.removeAt(0)
                 }

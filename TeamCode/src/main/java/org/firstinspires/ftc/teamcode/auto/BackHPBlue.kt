@@ -130,7 +130,7 @@ open class BackHPBlue : InheritableAuto() {
 
             7 -> busy {
                 if (shotSets == 2) {
-                    subsystems.motifShot()
+                    subsystems.motifShot(ObeliskStates.PGP)
                     shotSets++
                 }
 

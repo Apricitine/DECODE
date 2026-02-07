@@ -146,7 +146,7 @@ open class GoalCompleteBlue : InheritableAuto() {
 
             10 -> busy {
                 if (shotSets == 2) {
-                    subsystems.motifShot()
+                    subsystems.motifShot(ObeliskStates.PGP)
                     shotSets++
                 }
                 geedadee(6, 11)
