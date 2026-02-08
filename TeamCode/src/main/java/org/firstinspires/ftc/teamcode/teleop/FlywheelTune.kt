@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.util.Button
 
-@TeleOp(name = "Flywheel Tuner", group = "main")
+@TeleOp(name = "Flywheel Tuner", group = "Test")
 class FlywheelTune : Inheritable() {
 
     // ticks per second

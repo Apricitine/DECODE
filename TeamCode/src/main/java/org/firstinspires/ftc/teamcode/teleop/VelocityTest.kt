@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.util.Button
 
-@TeleOp(name = "Velocity Test", group = "main")
+@TeleOp(name = "Velocity Test", group = "Test")
 class VelocityTest : Inheritable() {
     var v = 1000.0
 

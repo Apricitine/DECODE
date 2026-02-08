@@ -23,7 +23,6 @@ enum class LiftStates { ZERO, ONE, TWO, THREE }
 
 
 @Configurable
-@TeleOp
 abstract class Inheritable : Subsystems() {
     private val TURN_KP = 1.0
     private val MAX_TURN = 0.6
@@ -85,13 +84,6 @@ abstract class Inheritable : Subsystems() {
         carouselState = CarouselStates.FRONT
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
-        leftLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        rightLift.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-        leftLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        rightLift.mode = DcMotor.RunMode.RUN_USING_ENCODER
-
-        rightLift.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel.setPIDFCoefficients(
             DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
@@ -176,24 +168,24 @@ abstract class Inheritable : Subsystems() {
         }
     }
 
-    fun lift(button: Button) {
-        if (button.`is`(Button.States.TAP)) lifting = true
-        if (!lifting) return
-
-        val targets = intArrayOf(
-            LIFT_STAGE_ONE, LIFT_STAGE_TWO, LIFT_STAGE_THREE, LIFT_STAGE_FOUR
-        )
-
-        leftLift.targetPosition = targets[liftState.ordinal]
-        rightLift.targetPosition = -targets[liftState.ordinal]
-        leftLift.power = 0.9
-        rightLift.power = 0.9
-        leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
-        rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
-
-        if (liftState.ordinal < targets.lastIndex && !leftLift.isBusy && !rightLift.isBusy) liftState =
-            LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
-    }
+//    fun lift(button: Button) {
+//        if (button.`is`(Button.States.TAP)) lifting = true
+//        if (!lifting) return
+//
+//        val targets = intArrayOf(
+//            LIFT_STAGE_ONE, LIFT_STAGE_TWO, LIFT_STAGE_THREE, LIFT_STAGE_FOUR
+//        )
+//
+//        leftLift.targetPosition = targets[liftState.ordinal]
+//        rightLift.targetPosition = -targets[liftState.ordinal]
+//        leftLift.power = 0.9
+//        rightLift.power = 0.9
+//        leftLift.mode = DcMotor.RunMode.RUN_TO_POSITION
+//        rightLift.mode = DcMotor.RunMode.RUN_TO_POSITION
+//
+//        if (liftState.ordinal < targets.lastIndex && !leftLift.isBusy && !rightLift.isBusy) liftState =
+//            LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
+//    }
 
     fun flywheel(button: Button) {
         if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
