@@ -51,7 +51,7 @@ abstract class Inheritable : Subsystems() {
     val b = Button()
     val y = Button()
     val x = Button()
-    val up = Button()
+    val up= Button()
     val right = Button()
     val left = Button()
     val down = Button()
@@ -64,6 +64,18 @@ abstract class Inheritable : Subsystems() {
 
     val a1 = Button()
     val b1 = Button()
+    val x1 = Button()
+    val y1 = Button()
+    val up1 = Button()
+    val right1 = Button()
+    val left1 = Button()
+    val down1 = Button()
+    val rightBumper1 = Button()
+    val rightTrigger1 = Button()
+    val leftBumper1 = Button()
+    val leftTrigger1 = Button()
+    val leftStick1 = Button()
+    val rightStick1 = Button()
 
     override fun init() {
         timeSinceLastColorUpdate = ElapsedTime()
@@ -116,7 +128,7 @@ abstract class Inheritable : Subsystems() {
         }
 
         if (aligning) {
-            alignTurnOnly()
+            alignTurnOnly(power)
         }
     }
 
@@ -255,7 +267,7 @@ abstract class Inheritable : Subsystems() {
     fun alignTurnOnly(power: Double = 1.0) {
         val tag = goalTagPose ?: return
         val headingError = atan2(tag.x, tag.y)
-        val turn = (-headingError * TURN_KP).coerceIn(-MAX_TURN, MAX_TURN)
+        val turn = (-headingError)
 
         log("turn distance", turn)
 
@@ -294,14 +306,26 @@ abstract class Inheritable : Subsystems() {
         left.update(gamepad2.dpad_left)
         down.update(gamepad2.dpad_down)
         rightBumper.update(gamepad2.right_bumper)
+        leftBumper.update(gamepad2.left_bumper)
+        leftStick.update(gamepad2.left_stick_button)
+        rightStick.update(gamepad2.right_stick_button)
+        rightTrigger.update(gamepad2.right_trigger > 0.1)
+        leftTrigger.update(gamepad2.left_trigger > 0.1)
+
 
         a1.update(gamepad1.a)
         b1.update(gamepad1.b)
-
-        rightTrigger.update(gamepad2.right_trigger > 0.1)
-        leftBumper.update(gamepad2.left_bumper)
-        leftTrigger.update(gamepad2.left_trigger > 0.1)
-        leftStick.update(gamepad2.left_stick_button)
-        rightStick.update(gamepad2.right_stick_button)
+        x1.update(gamepad1.x)
+        y1.update(gamepad1.y)
+        up1.update(gamepad1.dpad_up)
+        down1.update(gamepad1.dpad_down)
+        left1.update(gamepad1.dpad_left)
+        right1.update(gamepad1.dpad_right)
+        rightBumper1.update(gamepad1.right_bumper)
+        leftBumper1.update(gamepad1.left_bumper)
+        leftStick.update(gamepad1.left_stick_button)
+        rightStick.update(gamepad1.right_stick_button)
+        rightTrigger1.update(gamepad1.right_trigger > 0.1)
+        leftTrigger1.update(gamepad1.left_trigger > 0.1)
     }
 }

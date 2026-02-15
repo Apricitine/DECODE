@@ -36,9 +36,9 @@ class Constants {
                 /* these are solid */
                 .leftPodY(4.75)
                 .rightPodY(-4.75)
-                .strafePodX(-3.25)
-                .leftEncoder_HardwareMapName("rightFront")
-                .rightEncoder_HardwareMapName("rightRear")
+                .strafePodX(-6.0)
+                .leftEncoder_HardwareMapName("rightRear")
+                .rightEncoder_HardwareMapName("rightFront")
                 .strafeEncoder_HardwareMapName("leftRear")
                 /* these need to be determined */
                 .leftEncoderDirection(Encoder.REVERSE)

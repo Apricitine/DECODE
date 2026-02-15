@@ -168,6 +168,7 @@ abstract class Subsystems : OpMode() {
     }
 
     fun logGoalTagDistance() {
+        if (processor.detections == null)
         for (detection in processor.detections) {
             if (detection.id !in 21..23) {
                 log("y distance from tag", detection.ftcPose.y)
