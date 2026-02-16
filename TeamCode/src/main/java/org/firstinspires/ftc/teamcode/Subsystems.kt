@@ -182,7 +182,7 @@ abstract class Subsystems : OpMode() {
     }
 
     fun getTicksPerSecond(call: () -> Double): Double {
-        return call() * TICKS_PER_SECOND_PER_INCH + MIN_TICKS_PER_SECOND
+        return (call() * call() * 0.0248187) - (1.09024 * call()) + 1120.55706
     }
 
     class TimedSequence {

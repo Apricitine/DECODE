@@ -15,6 +15,7 @@ class VelocityTest : Inheritable() {
         if (up.`is`(Button.States.TAP)) v += 10.0
         if (down.`is`(Button.States.TAP)) v -= 10.0
         flywheel0.velocity = v
+        flywheel1.velocity = v
         log("current velocity", flywheel0.velocity)
         log("target velocity", v)
     }

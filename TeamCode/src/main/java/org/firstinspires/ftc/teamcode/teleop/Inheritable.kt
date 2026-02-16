@@ -20,7 +20,7 @@ enum class LiftStates { ZERO, ONE, TWO, THREE }
 abstract class Inheritable : Subsystems() {
     private val TURN_KP = 1.0
     private val MAX_TURN = 0.6
-    private val ALIGN_ANGLE_TOL = Math.toRadians(1.5)
+    val ALIGN_ANGLE_TOL = Math.toRadians(1.5)
 
     protected var carouselState: CarouselStates = CarouselStates.FRONT
     private var intakeRunning: Boolean = false
@@ -33,7 +33,7 @@ abstract class Inheritable : Subsystems() {
 
     var canShoot = false
 
-    private var goalTagPose: AprilTagPoseFtc? = null
+    var goalTagPose: AprilTagPoseFtc? = null
 
     var targetVelocity: Double = 0.0
 
@@ -97,11 +97,11 @@ abstract class Inheritable : Subsystems() {
         flywheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0))
 
         flywheel0.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        flywheel1.direction = DcMotorSimple.Direction.FORWARD
+        flywheel0.direction = DcMotorSimple.Direction.REVERSE
         flywheel0.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         flywheel1.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        flywheel1.direction = DcMotorSimple.Direction.REVERSE
+        flywheel1.direction = DcMotorSimple.Direction.FORWARD
         flywheel1.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
@@ -279,7 +279,7 @@ abstract class Inheritable : Subsystems() {
         )
 
         if (kotlin.math.abs(headingError) < ALIGN_ANGLE_TOL) {
-            robot.startTeleopDrive()
+            robot.startTeleopDrive(true)
             aligning = false
         }
     }
