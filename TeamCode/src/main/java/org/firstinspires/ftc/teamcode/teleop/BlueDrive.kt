@@ -31,7 +31,7 @@ class BlueDrive : Inheritable() {
 
         log("\nflywheel state", "")
         log("| latest target velocity", targetVelocity)
-        log("| current velocity", flywheel.velocity)
+        log("| current velocity", flywheel0.velocity)
         log("| can we shoot?", if (canShoot) "YES" else "NO")
 
         log("\nlifting?", lifting)

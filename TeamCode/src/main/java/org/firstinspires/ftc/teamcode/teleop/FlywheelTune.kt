@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleop
 
-import com.pedropathing.control.PIDFCoefficients
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.util.Button
@@ -29,7 +28,7 @@ class FlywheelTune : Inheritable() {
             Coefficients.F
         )
 
-        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
+        flywheel0.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
     }
 
     override fun loop() {
@@ -55,13 +54,13 @@ class FlywheelTune : Inheritable() {
             Coefficients.F
         )
 
-        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
+        flywheel0.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients)
 
-        flywheel.velocity = currentTargetVelocity
+        flywheel0.velocity = currentTargetVelocity
 
         log("target velocity", currentTargetVelocity)
-        log("current velocity", flywheel.velocity)
-        log("error", currentTargetVelocity - flywheel.velocity)
+        log("current velocity", flywheel0.velocity)
+        log("error", currentTargetVelocity - flywheel0.velocity)
         log("---------------------------------------------")
         log("tuning P", Coefficients.P)
         log("tuning F", Coefficients.F)

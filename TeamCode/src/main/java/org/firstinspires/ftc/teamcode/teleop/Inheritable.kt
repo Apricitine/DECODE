@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.bylazar.configurables.annotations.Configurable
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
@@ -9,14 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Subsystems
 import org.firstinspires.ftc.teamcode.Utility
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_FOUR
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_ONE
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_THREE
-import org.firstinspires.ftc.teamcode.Utility.Constants.Companion.LIFT_STAGE_TWO
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants.Companion.createFollower
 import org.firstinspires.ftc.teamcode.util.Button
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
-import java.lang.Thread.sleep
 import kotlin.math.atan2
 
 enum class LiftStates { ZERO, ONE, TWO, THREE }
@@ -97,13 +91,18 @@ abstract class Inheritable : Subsystems() {
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
 
-        flywheel.setPIDFCoefficients(
+        flywheel0.setPIDFCoefficients(
             DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
         )
+        flywheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0))
 
-        flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        flywheel.direction = DcMotorSimple.Direction.REVERSE
-        flywheel.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        flywheel0.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel1.direction = DcMotorSimple.Direction.FORWARD
+        flywheel0.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        flywheel1.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel1.direction = DcMotorSimple.Direction.REVERSE
+        flywheel1.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
 
     override fun loop() {
@@ -206,8 +205,9 @@ abstract class Inheritable : Subsystems() {
         else targetVelocity = 0.0
 
         canShoot =
-            (kotlin.math.abs(flywheel.velocity - targetVelocity) <= 100) && targetVelocity != 0.0
-        flywheel.velocity = targetVelocity
+            (kotlin.math.abs(flywheel0.velocity - targetVelocity) <= 100) && targetVelocity != 0.0
+        flywheel0.velocity = targetVelocity
+        flywheel1.velocity = targetVelocity
     }
 
     private fun plungerMotion() {

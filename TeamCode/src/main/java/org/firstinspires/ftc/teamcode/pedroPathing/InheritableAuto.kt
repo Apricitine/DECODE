@@ -44,9 +44,15 @@ abstract class InheritableAuto : Subsystems() {
         plunger.direction = Servo.Direction.REVERSE
         plunger.position = 0.02
 
-        flywheel.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        flywheel.direction = DcMotorSimple.Direction.REVERSE
-        flywheel.setPIDFCoefficients(
+        flywheel0.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel0.direction = DcMotorSimple.Direction.FORWARD
+        flywheel0.setPIDFCoefficients(
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
+        )
+
+        flywheel1.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        flywheel1.direction = DcMotorSimple.Direction.REVERSE
+        flywheel1.setPIDFCoefficients(
             DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
         )
 
@@ -114,7 +120,8 @@ abstract class InheritableAuto : Subsystems() {
          * @param velocity The amount of power to give to the flywheel motor.
          */
         fun flywheel(velocity: Double) {
-            flywheel.velocity = velocity
+            flywheel0.velocity = velocity
+            flywheel1.velocity = velocity
         }
 
         fun TimedSequence.plunger(): TimedSequence {
