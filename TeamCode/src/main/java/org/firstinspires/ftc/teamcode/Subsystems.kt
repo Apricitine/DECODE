@@ -170,7 +170,7 @@ abstract class Subsystems : OpMode() {
     }
 
     fun logGoalTagDistance() {
-        if (processor.detections == null)
+        if (processor.detections == null) return
         for (detection in processor.detections) {
             if (detection.id !in 21..23) {
                 log("y distance from tag", detection.ftcPose.y)
@@ -182,7 +182,7 @@ abstract class Subsystems : OpMode() {
     }
 
     fun getTicksPerSecond(call: () -> Double): Double {
-        return (call() * call() * 0.0248187) - (1.09024 * call()) + 1120.55706
+        return (call() * call() * 0.0248187) - (1.09024 * call()) + 1040.0
     }
 
     class TimedSequence {

@@ -8,16 +8,21 @@ import org.firstinspires.ftc.teamcode.pedroPathing.InheritableAuto
 
 @Autonomous(name = "Auto Test", group = "main")
 open class Test : InheritableAuto() {
+    var didIt = false
+
     val poses = mapOf(
-        "start" to Pose(21.0, 123.0, Math.toRadians(315.0)),
-        "camera" to Pose(36.0, 108.0, Math.toRadians(45.0))
+        "start" to Pose(24.0, 24.0, Math.toRadians(0.0)),
+        "camera" to Pose(48.0, 48.0, Math.toRadians(0.0))
     )
 
     lateinit var path: PathChain
 
     override fun loop() {
+        robot.setStartingPose(poses["start"])
+
         super.loop()
 
+        pathUpdate()
         log("time", motifShot.timer)
     }
 
@@ -28,7 +33,10 @@ open class Test : InheritableAuto() {
     }
 
     override fun pathUpdate() {
-        robot.followPath(path)
+        if (!didIt) {
+            busy { robot.followPath(path, true) }
+            didIt = true
+        }
     }
 
 

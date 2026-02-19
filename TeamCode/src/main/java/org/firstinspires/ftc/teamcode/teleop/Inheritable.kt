@@ -92,9 +92,9 @@ abstract class Inheritable : Subsystems() {
         plunger.position = 0.02
 
         flywheel0.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 18.0)
         )
-        flywheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0))
+        flywheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 18.0))
 
         flywheel0.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel0.direction = DcMotorSimple.Direction.REVERSE
@@ -222,11 +222,11 @@ abstract class Inheritable : Subsystems() {
         if (button.`is`(Button.States.TAP) && quickShot.isFinished()) {
             quickShot.reset()
                 .run { plungerMotion() }
-                .waitFor(650) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
+                .waitFor(600) { carousel.position = Utility.Constants.SINGLE_ROTATION_CAROUSEL }
                 .waitFor(400) { plungerMotion() }
-                .waitFor(650) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
+                .waitFor(600) { carousel.position = Utility.Constants.DOUBLE_ROTATION_CAROUSEL }
                 .waitFor(400) { plungerMotion() }
-                .waitFor(650) { carousel.position = 0.02 }
+                .waitFor(600) { carousel.position = 0.02 }
         }
 
         quickShot.update()

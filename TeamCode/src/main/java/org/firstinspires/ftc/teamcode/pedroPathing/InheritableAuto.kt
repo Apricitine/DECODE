@@ -47,16 +47,22 @@ abstract class InheritableAuto : Subsystems() {
         flywheel0.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel0.direction = DcMotorSimple.Direction.REVERSE
         flywheel0.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 18.0)
         )
 
         flywheel1.mode = DcMotor.RunMode.RUN_USING_ENCODER
         flywheel1.direction = DcMotorSimple.Direction.FORWARD
         flywheel1.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(60.0, 0.0, 0.0, 18.0)
+            DcMotor.RunMode.RUN_USING_ENCODER, PIDFCoefficients(50.0, 0.0, 0.0, 18.0)
         )
 
         timeSinceLastColorUpdate = ElapsedTime()
+        robot.update()
+        panelsTelemetry.update()
+
+        log("x", robot.pose.x)
+        log("y", robot.pose.y)
+        log("heading", robot.pose.heading)
     }
 
     override fun loop() {

@@ -85,7 +85,7 @@ open class GoalCompleteBlue : InheritableAuto() {
     override fun pathUpdate() {
         when (pathState) {
             0 -> {
-                robot.followPath(PathChains.getTag)
+                robot.followPath(PathChains.getTag, true)
                 setAndResetPathTimer(1)
             }
 
