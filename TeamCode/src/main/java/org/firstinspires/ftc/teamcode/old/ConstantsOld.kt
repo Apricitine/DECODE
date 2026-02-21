@@ -1,0 +1,64 @@
+package org.firstinspires.ftc.teamcode.old
+
+import com.pedropathing.follower.Follower
+import com.pedropathing.follower.FollowerConstants
+import com.pedropathing.ftc.FollowerBuilder
+import com.pedropathing.ftc.drivetrains.MecanumConstants
+import com.pedropathing.ftc.localization.Encoder
+import com.pedropathing.ftc.localization.constants.ThreeWheelIMUConstants
+import com.pedropathing.paths.PathConstraints
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
+import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
+
+class ConstantsOld {
+    companion object {
+        private var followerConstants: FollowerConstants = FollowerConstants().mass(13.51)
+        private var pathConstraints: PathConstraints = PathConstraints(0.99, 100.0, 1.0, 1.0)
+        private var mecanumConstants: MecanumConstants =
+            MecanumConstants()
+                .maxPower(1.0)
+                .leftFrontMotorName("leftFront")
+                .leftRearMotorName("leftRear")
+                .rightFrontMotorName("rightFront")
+                .rightRearMotorName("rightRear")
+                .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+                .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+                .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+                .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+        private var localizerConstants: ThreeWheelIMUConstants =
+            ThreeWheelIMUConstants()
+                /* these need to be determined */
+                .forwardTicksToInches(.001989436789)
+                .strafeTicksToInches(.00298415518)
+                .turnTicksToInches(.001989436789)
+                /* these are solid */
+                .leftPodY(4.75)
+                .rightPodY(-4.75)
+                .strafePodX(-6.0)
+                .leftEncoder_HardwareMapName("rightRear")
+                .rightEncoder_HardwareMapName("rightFront")
+                .strafeEncoder_HardwareMapName("leftRear")
+                /* these need to be determined */
+                .leftEncoderDirection(Encoder.REVERSE)
+                .rightEncoderDirection(Encoder.REVERSE)
+                .strafeEncoderDirection(Encoder.FORWARD)
+                /* these are solid */
+                .IMU_HardwareMapName("imu")
+                .IMU_Orientation(
+                    RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                    )
+                )
+
+        @JvmStatic
+        fun createFollower(hardwareMap: HardwareMap?): Follower {
+            return FollowerBuilder(followerConstants, hardwareMap)
+                .threeWheelIMULocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .mecanumDrivetrain(mecanumConstants)
+                .build()
+        }
+    }
+}
