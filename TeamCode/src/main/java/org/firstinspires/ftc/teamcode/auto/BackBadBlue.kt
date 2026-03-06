@@ -26,19 +26,22 @@ open class BackBadBlue : InheritableAuto() {
     override fun pathUpdate() {
         when (pathState) {
             0 -> busy {
+                if (!reset) {
+                    setAndResetPathTimer(0)
+                    reset = true
+                }
                 obeliskTag()
                 if (pathTimer.elapsedTimeSeconds > 6) {
                     setAndResetPathTimer(1)
+                    if (obeliskState == ObeliskStates.NONE) obeliskState = ObeliskStates.GPP
                 }
             }
 
             1 -> busy {
-                if (obeliskState == ObeliskStates.NONE) obeliskState = ObeliskStates.GPP
                 if (shotSets == 0) {
                     subsystems.motifShot()
                     shotSets++
                 }
-                if (pathTimer.elapsedTimeSeconds > 4) setAndResetPathTimer(2)
             }
 
         }

@@ -1,0 +1,22 @@
+package org.firstinspires.ftc.teamcode.teleop
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.util.Button
+
+@TeleOp(name = "Max Flywheel", group = "Fun")
+class MaxFlywheel : Inheritable() {
+    var v = 4000.0
+
+    override fun loop() {
+        super.loop()
+        canShoot = true
+        plunger(a)
+
+        if (up.`is`(Button.States.TAP)) v += 10.0
+        if (down.`is`(Button.States.TAP)) v -= 10.0
+        flywheel0.velocity = v
+        flywheel1.velocity = v
+        log("current velocity", flywheel0.velocity)
+        log("target velocity", v)
+    }
+}
