@@ -32,6 +32,7 @@ abstract class Inheritable : Subsystems() {
     private var aligning = false
 
     var canShoot = false
+    var overrideLaunch = false
 
     var goalTagPose: AprilTagPoseFtc? = null
 
@@ -198,10 +199,24 @@ abstract class Inheritable : Subsystems() {
 //            LiftStates.entries.toTypedArray()[liftState.ordinal + 1]
 //    }
 
+    fun hopefulFlywheel(button: Button) {
+        if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
+
+        targetVelocity = if (flywheelRunning) 1100.0
+        else 0.0
+
+        canShoot =
+            (kotlin.math.abs(flywheel0.velocity - targetVelocity) <= 100) && targetVelocity != 0.0
+        flywheel0.velocity = targetVelocity
+        flywheel1.velocity = targetVelocity
+    }
+
     fun flywheel(button: Button) {
         if (button.`is`(Button.States.TAP)) flywheelRunning = !flywheelRunning
 
-        if (flywheelRunning) goalTagPose?.let { targetVelocity = getTicksPerSecond { it.y - 2.0 } }
+        if (flywheelRunning) goalTagPose?.let {
+            targetVelocity = getTicksPerSecond { (it.y - 2.0) }
+        }
         else targetVelocity = 0.0
 
         canShoot =
